@@ -1,147 +1,35 @@
 package io.github.haku4130.noscrollguard.service
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import androidx.core.app.NotificationCompat
-import io.github.haku4130.noscrollguard.Constants
-import io.github.haku4130.noscrollguard.R
+import io.github.haku4130.noscrollguard.ui.MainActivity
 
 object GuardNotifications {
-
-    const val CHANNEL_ONGOING = "guard_ongoing"
-    const val CHANNEL_EVENTS = "guard_events"
     const val ID_ONGOING = 1
-    const val ID_EVENT = 2
-    const val ID_OVERLAY = 3
-    const val ID_REOPEN = 4
-    const val ID_GUARD_OVERLAY = 5
-
+    private const val ONGOING = "keeper_running"
+    private const val EVENTS = "keeper_events"
     fun ensureChannels(context: Context) {
-        val nm = context.getSystemService(NotificationManager::class.java)
-        nm.createNotificationChannel(
-            NotificationChannel(CHANNEL_ONGOING, "Guard running", NotificationManager.IMPORTANCE_MIN)
-        )
-        nm.createNotificationChannel(
-            NotificationChannel(CHANNEL_EVENTS, "Resets caught", NotificationManager.IMPORTANCE_DEFAULT)
-        )
+        context.getSystemService(NotificationManager::class.java).apply {
+            createNotificationChannel(NotificationChannel(ONGOING, "Accessibility Keeper", NotificationManager.IMPORTANCE_LOW))
+            createNotificationChannel(NotificationChannel(EVENTS, "Recovery activity", NotificationManager.IMPORTANCE_LOW))
+        }
     }
-
-    fun ongoing(context: Context): Notification =
-        NotificationCompat.Builder(context, CHANNEL_ONGOING)
-            .setContentTitle(context.getString(R.string.ongoing_title))
-            .setSmallIcon(android.R.drawable.ic_lock_idle_lock)
-            .setOngoing(true)
-            .build()
-
-    fun notifyRepair(context: Context, text: String) {
-        val n = NotificationCompat.Builder(context, CHANNEL_EVENTS)
-            .setContentTitle(context.getString(R.string.repair_title))
-            .setContentText(text)
+    private fun open(context: Context): PendingIntent = PendingIntent.getActivity(
+        context, 0, Intent(context, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    )
+    fun ongoing(context: Context): Notification = NotificationCompat.Builder(context, ONGOING)
+        .setContentTitle("Accessibility Keeper")
+        .setContentText("Monitoring your selected apps • tap for controls")
+        .setSmallIcon(android.R.drawable.ic_lock_idle_lock).setContentIntent(open(context)).setOngoing(true).build()
+    fun notifyRepair(context: Context, text: String, openPackage: String? = null) {
+        val launch = openPackage?.let { context.packageManager.getLaunchIntentForPackage(it) }
+        val tap = launch?.let { PendingIntent.getActivity(context, 10, it, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT) } ?: open(context)
+        val notification = NotificationCompat.Builder(context, EVENTS)
+            .setContentTitle("Accessibility recovery").setContentText(text)
             .setStyle(NotificationCompat.BigTextStyle().bigText(text))
-            .setSmallIcon(android.R.drawable.ic_dialog_alert)
-            .setAutoCancel(true)
-            .build()
-        context.getSystemService(NotificationManager::class.java).notify(ID_EVENT, n)
+            .setSmallIcon(android.R.drawable.ic_dialog_info).setContentIntent(tap).setAutoCancel(true).build()
+        context.getSystemService(NotificationManager::class.java).notify(2, notification)
     }
-
-    /**
-     * The overlay permission cannot be restored programmatically — that needs
-     * MANAGE_APP_OPS_MODES, which is signature-only. So point the user straight at the
-     * screen where they can do it themselves.
-     */
-    fun notifyOverlayRevoked(context: Context) {
-        val intent = Intent(
-            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.parse("package:${Constants.NOSCROLL_PACKAGE}")
-        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-        val pending = PendingIntent.getActivity(
-            context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        val n = NotificationCompat.Builder(context, CHANNEL_EVENTS)
-            .setContentTitle(context.getString(R.string.overlay_title))
-            .setContentText(context.getString(R.string.overlay_text))
-            .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(R.string.overlay_text)))
-            .setSmallIcon(android.R.drawable.ic_dialog_alert)
-            .setContentIntent(pending)
-            .setAutoCancel(true)
-            .build()
-        context.getSystemService(NotificationManager::class.java).notify(ID_OVERLAY, n)
-    }
-
-    /**
-     * Restoring the permission is not the end of it: apps check it when they start, so a
-     * running process keeps believing it may not draw until it restarts.
-     */
-    fun notifyOverlayRestored(context: Context) {
-        val n = NotificationCompat.Builder(context, CHANNEL_EVENTS)
-            .setContentTitle(context.getString(R.string.overlay_back_title))
-            .setContentText(context.getString(R.string.overlay_back_text))
-            .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(R.string.overlay_back_text)))
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .apply { openGuardedApp(context, 1)?.let { setContentIntent(it) } }
-            .setAutoCancel(true)
-            .build()
-        context.getSystemService(NotificationManager::class.java).notify(ID_OVERLAY, n)
-    }
-
-    /**
-     * A repair left the app inert and the guard could not open it. A tap on a
-     * notification is a foreground start, so this works where the guard's own launch
-     * would be dropped.
-     */
-    fun notifyReopenNeeded(context: Context) {
-        val n = NotificationCompat.Builder(context, CHANNEL_EVENTS)
-            .setContentTitle(context.getString(R.string.reopen_title))
-            .setContentText(context.getString(R.string.reopen_text))
-            .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(R.string.reopen_text)))
-            .setSmallIcon(android.R.drawable.ic_dialog_alert)
-            .apply { openGuardedApp(context, 2)?.let { setContentIntent(it) } }
-            .setAutoCancel(true)
-            .build()
-        context.getSystemService(NotificationManager::class.java).notify(ID_REOPEN, n)
-    }
-
-    /** Without its own overlay permission the guard can repair, but never revive. */
-    fun notifyGuardOverlayRevoked(context: Context) {
-        val intent = Intent(
-            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.parse("package:${context.packageName}")
-        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-        val pending = PendingIntent.getActivity(
-            context, 3, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        val n = NotificationCompat.Builder(context, CHANNEL_EVENTS)
-            .setContentTitle(context.getString(R.string.guard_overlay_title))
-            .setContentText(context.getString(R.string.guard_overlay_text))
-            .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(R.string.guard_overlay_text)))
-            .setSmallIcon(android.R.drawable.ic_dialog_alert)
-            .setContentIntent(pending)
-            .setAutoCancel(true)
-            .build()
-        context.getSystemService(NotificationManager::class.java).notify(ID_GUARD_OVERLAY, n)
-    }
-
-    fun canNotify(context: Context): Boolean =
-        context.getSystemService(NotificationManager::class.java).areNotificationsEnabled()
-
-    private fun openGuardedApp(context: Context, requestCode: Int): PendingIntent? =
-        context.packageManager
-            .getLaunchIntentForPackage(Constants.NOSCROLL_PACKAGE)
-            ?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            ?.let {
-                PendingIntent.getActivity(
-                    context, requestCode, it,
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                )
-            }
 }

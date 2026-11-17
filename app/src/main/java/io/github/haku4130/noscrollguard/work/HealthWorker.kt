@@ -16,8 +16,10 @@ import java.util.concurrent.TimeUnit
 class HealthWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
 
     override fun doWork(): Result {
-        GuardService.start(applicationContext)
         GuardService.checkAndRepair(applicationContext, "health check")
+        // Android may disallow a background foreground-service launch. The worker can
+        // still repair settings itself; do not fail it just because restart was denied.
+        runCatching { GuardService.start(applicationContext) }
         return Result.success()
     }
 

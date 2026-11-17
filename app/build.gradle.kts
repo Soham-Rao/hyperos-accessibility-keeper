@@ -14,11 +14,11 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "io.github.haku4130.noscrollguard"
+        applicationId = "io.github.soham.accessibilitykeeper"
         minSdk = 33
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "0.2.0"
     }
 
     signingConfigs {
@@ -49,13 +49,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlin {
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
     }
 

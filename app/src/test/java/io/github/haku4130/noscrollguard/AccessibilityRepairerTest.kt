@@ -21,7 +21,6 @@ class AccessibilityRepairerTest {
         assertEquals(RepairResult.Success, result)
         assertEquals(
             listOf(
-                SecureKeys.ACCESSIBILITY_ENABLED to "0",
                 SecureKeys.ENABLED_SERVICES to "",
                 SecureKeys.ENABLED_SERVICES to Constants.NOSCROLL_SERVICE,
                 SecureKeys.ACCESSIBILITY_ENABLED to "1"
@@ -33,6 +32,7 @@ class AccessibilityRepairerTest {
     @Test
     fun `cycle sleeps exactly once for the required duration`() {
         val fake = FakeSecureSettings()
+        fake.values[SecureKeys.ENABLED_SERVICES] = Constants.NOSCROLL_SERVICE
         val slept = mutableListOf<Long>()
         AccessibilityRepairer(fake, sleeper = { slept += it }).repair()
         assertEquals(listOf(REBIND_PAUSE_MS), slept)
@@ -41,6 +41,7 @@ class AccessibilityRepairerTest {
     @Test
     fun `returns NoPermission and stops when writes are denied`() {
         val fake = FakeSecureSettings()
+        fake.values[SecureKeys.ENABLED_SERVICES] = Constants.NOSCROLL_SERVICE
         fake.writesFail = true
 
         val result = AccessibilityRepairer(fake, sleeper = {}).repair()

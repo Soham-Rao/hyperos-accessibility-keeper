@@ -7,3 +7,6 @@ local.properties
 letter-to-noscroll.txt
 *.jks
 *.keystore
+
+# Private planning notes
+misc/

@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">NoScroll Guard</string>
-    <string name="ongoing_title">NoScroll Guard is watching</string>
+    <string name="app_name">Accessibility Keeper</string>
+    <string name="ongoing_title">Accessibility Keeper is watching</string>
     <string name="repair_title">NoScroll permission was reset</string>
     <string name="share_log">Share log</string>
     <string name="pause">Pause for 30 minutes</string>
@@ -14,6 +14,6 @@
     <string name="overlay_back_text">Reopen NoScroll so it picks the permission up — apps only check it when they start. Tap to open it.</string>
     <string name="reopen_title">Open NoScroll to wake it up</string>
     <string name="reopen_text">Its permission was restored, but it does nothing until opened, and the guard could not open it by itself. Tap to open NoScroll.</string>
-    <string name="guard_overlay_title">NoScroll Guard cannot wake NoScroll up</string>
+    <string name="guard_overlay_title">Accessibility Keeper cannot wake NoScroll up</string>
     <string name="guard_overlay_text">The guard\'s own "Display over other apps" permission was revoked. Repairs still work, but NoScroll stays inert after each one. Tap to restore it.</string>
 </resources>

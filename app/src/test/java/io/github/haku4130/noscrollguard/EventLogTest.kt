@@ -59,4 +59,15 @@ class EventLogTest {
         val log = EventLog(tmp.newFile("events.log"))
         assertEquals(emptyList<Any>(), log.read())
     }
+
+    @Test fun `service metadata survives reload without breaking old entries`() {
+        val file = tmp.newFile("mixed.log")
+        val log = EventLog(file)
+        log.append(1L, "old entry")
+        log.append(2L, "Auto Clicker: open the app", "example.app/example.app.Service")
+        val entries = EventLog(file).read()
+        assertEquals(null, entries[0].component)
+        assertEquals("Auto Clicker: open the app", entries[1].message)
+        assertEquals("example.app/example.app.Service", entries[1].component)
+    }
 }
