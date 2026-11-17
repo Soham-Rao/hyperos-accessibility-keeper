@@ -370,8 +370,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
         item(R.drawable.ic_help, "How protection works", "A quick guide to switches and recovery") { howItWorks() }
-        item(R.drawable.ic_info, "About Keeper", "Version 0.2.0") {
-            sheet("Accessibility Keeper", "Version 0.2.0\n\nKeeps the accessibility apps you choose running.\n\nBased on HyperOS Accessibility Guard by haku4130. Licensed under MIT.")
+        item(R.drawable.ic_info, "About Keeper", "Credits, source and offline licenses") {
+            startActivity(Intent(this, AboutActivity::class.java))
         }
         body.addView(space(12))
         root.addView(ScrollView(this).apply { addView(body) }, LinearLayout.LayoutParams(-1, 0, 1f))

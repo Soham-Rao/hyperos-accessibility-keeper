@@ -1,0 +1,239 @@
+Third-party software notices
+
+Reviewed: 2026-11-18
+
+Accessibility Keeper is based on HyperOS Accessibility Guard by haku4130.
+The original project and this fork's modifications are covered by the bundled MIT license.
+
+The release runtime dependencies below declare Apache License 2.0 in their published Maven metadata (including inherited parent metadata where indicated). A full copy of Apache License 2.0 is bundled separately. Their own notices remain applicable; they are not relicensed under this project's MIT license.
+
+AndroidX: The Android Open Source Project and contributors.
+Kotlin, kotlinx.coroutines and JetBrains annotations: JetBrains and contributors.
+Guava ListenableFuture: Google and Guava contributors.
+
+No additional NOTICE/COPYING/copyright files were found in the reviewed runtime AAR/JAR files or their classes.jar contents. Existing embedded Apache license files are inventoried and are not intentionally removed from packaging.
+
+Resolved components
+
+androidx.activity:activity:1.7.0
+  License: Apache-2.0
+  Metadata evidence: androidx.activity:activity:1.7.0
+
+androidx.annotation:annotation-experimental:1.4.1
+  License: Apache-2.0
+  Metadata evidence: androidx.annotation:annotation-experimental:1.4.1
+
+androidx.annotation:annotation-jvm:1.8.1
+  License: Apache-2.0
+  Metadata evidence: androidx.annotation:annotation-jvm:1.8.1
+
+androidx.appcompat:appcompat-resources:1.7.0
+  License: Apache-2.0
+  Metadata evidence: androidx.appcompat:appcompat-resources:1.7.0
+
+androidx.appcompat:appcompat:1.7.0
+  License: Apache-2.0
+  Metadata evidence: androidx.appcompat:appcompat:1.7.0
+
+androidx.arch.core:core-common:2.2.0
+  License: Apache-2.0
+  Metadata evidence: androidx.arch.core:core-common:2.2.0
+
+androidx.arch.core:core-runtime:2.2.0
+  License: Apache-2.0
+  Metadata evidence: androidx.arch.core:core-runtime:2.2.0
+
+androidx.collection:collection-jvm:1.4.2
+  License: Apache-2.0
+  Metadata evidence: androidx.collection:collection-jvm:1.4.2
+
+androidx.concurrent:concurrent-futures-ktx:1.1.0
+  License: Apache-2.0
+  Metadata evidence: androidx.concurrent:concurrent-futures-ktx:1.1.0
+
+androidx.concurrent:concurrent-futures:1.1.0
+  License: Apache-2.0
+  Metadata evidence: androidx.concurrent:concurrent-futures:1.1.0
+
+androidx.core:core-ktx:1.15.0
+  License: Apache-2.0
+  Metadata evidence: androidx.core:core-ktx:1.15.0
+
+androidx.core:core:1.15.0
+  License: Apache-2.0
+  Metadata evidence: androidx.core:core:1.15.0
+
+androidx.cursoradapter:cursoradapter:1.0.0
+  License: Apache-2.0
+  Metadata evidence: androidx.cursoradapter:cursoradapter:1.0.0
+
+androidx.customview:customview:1.0.0
+  License: Apache-2.0
+  Metadata evidence: androidx.customview:customview:1.0.0
+
+androidx.drawerlayout:drawerlayout:1.0.0
+  License: Apache-2.0
+  Metadata evidence: androidx.drawerlayout:drawerlayout:1.0.0
+
+androidx.emoji2:emoji2-views-helper:1.3.0
+  License: Apache-2.0
+  Metadata evidence: androidx.emoji2:emoji2-views-helper:1.3.0
+
+androidx.emoji2:emoji2:1.3.0
+  License: Apache-2.0
+  Metadata evidence: androidx.emoji2:emoji2:1.3.0
+
+androidx.fragment:fragment:1.5.4
+  License: Apache-2.0
+  Metadata evidence: androidx.fragment:fragment:1.5.4
+
+androidx.interpolator:interpolator:1.0.0
+  License: Apache-2.0
+  Metadata evidence: androidx.interpolator:interpolator:1.0.0
+
+androidx.lifecycle:lifecycle-common-jvm:2.8.7
+  License: Apache-2.0
+  Metadata evidence: androidx.lifecycle:lifecycle-common-jvm:2.8.7
+
+androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7
+  License: Apache-2.0
+  Metadata evidence: androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7
+
+androidx.lifecycle:lifecycle-livedata-core:2.8.7
+  License: Apache-2.0
+  Metadata evidence: androidx.lifecycle:lifecycle-livedata-core:2.8.7
+
+androidx.lifecycle:lifecycle-livedata:2.8.7
+  License: Apache-2.0
+  Metadata evidence: androidx.lifecycle:lifecycle-livedata:2.8.7
+
+androidx.lifecycle:lifecycle-process:2.8.7
+  License: Apache-2.0
+  Metadata evidence: androidx.lifecycle:lifecycle-process:2.8.7
+
+androidx.lifecycle:lifecycle-runtime-android:2.8.7
+  License: Apache-2.0
+  Metadata evidence: androidx.lifecycle:lifecycle-runtime-android:2.8.7
+
+androidx.lifecycle:lifecycle-service:2.8.7
+  License: Apache-2.0
+  Metadata evidence: androidx.lifecycle:lifecycle-service:2.8.7
+
+androidx.lifecycle:lifecycle-viewmodel-android:2.8.7
+  License: Apache-2.0
+  Metadata evidence: androidx.lifecycle:lifecycle-viewmodel-android:2.8.7
+
+androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7
+  License: Apache-2.0
+  Metadata evidence: androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7
+
+androidx.lifecycle:lifecycle-viewmodel:2.8.7
+  License: Apache-2.0
+  Metadata evidence: androidx.lifecycle:lifecycle-viewmodel:2.8.7
+
+androidx.loader:loader:1.0.0
+  License: Apache-2.0
+  Metadata evidence: androidx.loader:loader:1.0.0
+
+androidx.profileinstaller:profileinstaller:1.3.1
+  License: Apache-2.0
+  Metadata evidence: androidx.profileinstaller:profileinstaller:1.3.1
+
+androidx.resourceinspection:resourceinspection-annotation:1.0.1
+  License: Apache-2.0
+  Metadata evidence: androidx.resourceinspection:resourceinspection-annotation:1.0.1
+
+androidx.room:room-common:2.6.1
+  License: Apache-2.0
+  Metadata evidence: androidx.room:room-common:2.6.1
+
+androidx.room:room-ktx:2.6.1
+  License: Apache-2.0
+  Metadata evidence: androidx.room:room-ktx:2.6.1
+
+androidx.room:room-runtime:2.6.1
+  License: Apache-2.0
+  Metadata evidence: androidx.room:room-runtime:2.6.1
+
+androidx.savedstate:savedstate:1.2.1
+  License: Apache-2.0
+  Metadata evidence: androidx.savedstate:savedstate:1.2.1
+
+androidx.sqlite:sqlite-framework:2.4.0
+  License: Apache-2.0
+  Metadata evidence: androidx.sqlite:sqlite-framework:2.4.0
+
+androidx.sqlite:sqlite:2.4.0
+  License: Apache-2.0
+  Metadata evidence: androidx.sqlite:sqlite:2.4.0
+
+androidx.startup:startup-runtime:1.1.1
+  License: Apache-2.0
+  Metadata evidence: androidx.startup:startup-runtime:1.1.1
+
+androidx.tracing:tracing-ktx:1.2.0
+  License: Apache-2.0
+  Metadata evidence: androidx.tracing:tracing-ktx:1.2.0
+
+androidx.tracing:tracing:1.2.0
+  License: Apache-2.0
+  Metadata evidence: androidx.tracing:tracing:1.2.0
+
+androidx.vectordrawable:vectordrawable-animated:1.1.0
+  License: Apache-2.0
+  Metadata evidence: androidx.vectordrawable:vectordrawable-animated:1.1.0
+
+androidx.vectordrawable:vectordrawable:1.1.0
+  License: Apache-2.0
+  Metadata evidence: androidx.vectordrawable:vectordrawable:1.1.0
+
+androidx.versionedparcelable:versionedparcelable:1.1.1
+  License: Apache-2.0
+  Metadata evidence: androidx.versionedparcelable:versionedparcelable:1.1.1
+
+androidx.viewpager:viewpager:1.0.0
+  License: Apache-2.0
+  Metadata evidence: androidx.viewpager:viewpager:1.0.0
+
+androidx.work:work-runtime-ktx:2.10.0
+  License: Apache-2.0
+  Metadata evidence: androidx.work:work-runtime-ktx:2.10.0
+
+androidx.work:work-runtime:2.10.0
+  License: Apache-2.0
+  Metadata evidence: androidx.work:work-runtime:2.10.0
+
+com.google.guava:listenablefuture:1.0
+  License: Apache-2.0
+  Metadata evidence: com.google.guava:guava-parent:26.0-android
+
+org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22
+  License: Apache-2.0
+  Metadata evidence: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22
+
+org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22
+  License: Apache-2.0
+  Metadata evidence: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22
+
+org.jetbrains.kotlin:kotlin-stdlib:2.2.0
+  License: Apache-2.0
+  Metadata evidence: org.jetbrains.kotlin:kotlin-stdlib:2.2.0
+
+org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3
+  License: Apache-2.0
+  Metadata evidence: org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3
+
+org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3
+  License: Apache-2.0
+  Metadata evidence: org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3
+
+org.jetbrains:annotations:23.0.0
+  License: Apache-2.0
+  Metadata evidence: org.jetbrains:annotations:23.0.0
+
+Scope and assets
+The app uses device-provided system fonts and some Android framework drawable references. Installed app names/icons are loaded from the device, not bundled as our own artwork. Project vector icons and the README sample-data SVG illustrations were created for this fork. No external font, stock image, icon pack or screenshot was added to the APK by this work.
+
+Gradle, Android Gradle Plugin, Kotlin compiler and JUnit/Hamcrest are development/test tools; they are not runtime APK components. The repository retains the Gradle wrapper; its Apache 2.0 license is covered by the included license text.
+
+Refresh the inventory and review notices whenever runtime dependencies or bundled assets change. This review does not establish ownership of every upstream contribution and is not a substitute for legal advice.

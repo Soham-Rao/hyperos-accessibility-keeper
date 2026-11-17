@@ -71,3 +71,35 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.10.0")
     testImplementation("junit:junit:4.13.2")
 }
+
+// Package canonical repository notices so source and offline app text cannot drift.
+val legalAssetsDirectory = layout.buildDirectory.dir("generated/legalAssets")
+val generateLegalAssets by tasks.registering(Sync::class) {
+    from(rootProject.file("LICENSE")) {
+        into("legal")
+        rename { "MIT.txt" }
+    }
+    from(rootProject.file("legal")) { into("legal") }
+    into(legalAssetsDirectory)
+}
+android.sourceSets.getByName("main").assets.srcDir(legalAssetsDirectory)
+
+// A dependency change requires reviewing its license and refreshing the notices.
+val verifyLicenseInventory by tasks.registering {
+    val inventory = rootProject.file("legal/runtime-dependencies.json")
+    inputs.file(inventory)
+    doLast {
+        val document = groovy.json.JsonSlurper().parse(inventory) as Map<*, *>
+        val components = document["components"] as List<*>
+        val expected = components.map { (it as Map<*, *>)["coordinate"].toString() }.toSet()
+        val actual = configurations.getByName("releaseRuntimeClasspath")
+            .resolvedConfiguration.resolvedArtifacts.map { it.moduleVersion.id.toString() }.toSet()
+        check(actual == expected) {
+            "Runtime dependencies changed. Review licenses and update legal/runtime-dependencies.json and notices. " +
+                "Added: ${actual - expected}; removed: ${expected - actual}"
+        }
+    }
+}
+tasks.named("preBuild") {
+    dependsOn(generateLegalAssets, verifyLicenseInventory)
+}

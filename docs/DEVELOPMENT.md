@@ -69,6 +69,7 @@ Source namespace retained from upstream: `app/src/main/java/io/github/haku4130/n
 | `RecoveryStatus.kt` | Remember when an app needs opening rather than endless retries |
 | `service/` | Foreground monitoring, recovery entry points and notifications |
 | `ui/MainActivity.kt` | App list, switches, menus, settings and activity |
+| `ui/AboutActivity.kt`, `ui/LegalDocumentActivity.kt`, `ui/InfoUi.kt` | Credits, project links and offline license documents |
 | `log/` | Bounded local activity journal and optional service metadata |
 | `app/src/test/` | Unit tests for settings preservation, decisions, parsing and logs |
 
@@ -91,3 +92,16 @@ If branch protection later requires this workflow, review GitHub's path-filter/r
 Follow [Testing](TESTING.md). Unit tests do not establish device compatibility, battery behavior or actual function of a third-party app. Do not intentionally disrupt someone's selected services without a controlled, reversible device test.
 
 Keep raw captures, device identifiers, machine settings and signing files out of commits. `misc/` is private working space and ignored entirely.
+
+## Updating dependencies and notices
+
+The build checks that `legal/runtime-dependencies.json` matches the resolved release runtime component list. It also packages the canonical root MIT license and files under `legal/` into APK assets, used by the offline About/license screens.
+
+When changing runtime dependencies:
+
+1. Inspect `./gradlew :app:dependencies --configuration releaseRuntimeClasspath` (use `gradlew.bat` on Windows).
+2. Review exact-version Maven license metadata, including parent POMs, and embedded LICENSE/NOTICE/COPYING files in AAR/JAR archives and nested classes.jar files.
+3. Update the component inventory, artifact hashes, `THIRD_PARTY_NOTICES.md` and `legal/THIRD_PARTY_NOTICES.txt`. Include any newly required full license or notice text under `legal/`; add an offline reader action if a different license is introduced.
+4. Rebuild, inspect the packaged assets and check the offline documents in the app. Keep upstream copyright/permission notices.
+
+Inventory artifact hashes record the reviewed inputs; the current component-list build check is not a complete dependency-integrity lock. Refresh the notice review when dependencies or assets change. See [third-party notices](../THIRD_PARTY_NOTICES.md) and [provenance](provenance/README.md).
