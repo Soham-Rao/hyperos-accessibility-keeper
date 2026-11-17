@@ -15,11 +15,13 @@ Only protect accessibility apps you trust. Depending on their capabilities, thir
 | Foreground-service permissions | Run the visible monitoring service | Background work has battery/platform implications |
 | `RECEIVE_BOOT_COMPLETED` | Resume monitoring after restart | Firmware autostart restrictions and force-stop behavior still matter |
 
-This table describes the first-party manifest. A complete merged-release-manifest/dependency audit and full privacy/terms screens are still part of public beta preparation. Do not treat this page as a completed security audit.
+The merged manifest additionally includes AndroidX scheduling permissions (`WAKE_LOCK`, `ACCESS_NETWORK_STATE`) and an app-specific signature permission. It has no `INTERNET` permission. Read the complete [permission guide](PERMISSIONS.md), [privacy policy](../PRIVACY.md), [terms](../TERMS.md) and [security reporting guidance](../SECURITY.md), also bundled offline in the app. A broader independent security audit has not been performed.
 
 ## Your controls
 
 - Newly discovered services default to unprotected.
+- First use and the policy-upgrade screen require acknowledgment before recovery starts. Existing installed selections are preserved while recovery waits.
+- Keeping choices after reinstalling target apps defaults off. Opting in permits only the same selected component and signing identity to retain its choice. Keeper's own uninstall clears its local data through Android.
 - Only a switch changes protection. Tapping a tile opens app options.
 - Turning protection off stops restoration but leaves the service's existing Android setting unchanged.
 - Turn protection off before deliberately disabling that service in Android Settings.
@@ -35,6 +37,6 @@ Keeper stores local selections and a bounded activity journal. Journal entries c
 
 Recovery is best effort. Correct settings and a bound service do not prove that every feature inside another app works. Device firmware can stop background work, and unsupported diagnostics cannot be treated as verified success.
 
-The project retains the [MIT license and its warranty/liability disclaimer](../LICENSE). No claim is made that a disclaimer eliminates every legal risk. A full permission/privacy review, policies and broader testing are still required before public release.
+The project retains the [MIT license and its warranty/liability disclaimer](../LICENSE). No claim is made that a disclaimer eliminates every legal risk. Broader device testing and a packaged-app security and usability audit remain part of public beta preparation.
 
 References: [Android secure-settings permission](https://developer.android.com/reference/android/Manifest.permission#WRITE_SECURE_SETTINGS), [accessibility service capabilities](https://developer.android.com/guide/topics/ui/accessibility/service).

@@ -41,6 +41,10 @@ class AboutActivity : AppCompatActivity() {
         body.addView(ui.row("Fork changes & provenance", "Source history, changes and license evidence on GitHub", R.drawable.ic_check) {
             openLink("https://github.com/Soham-Rao/hyperos-accessibility-keeper/blob/main/docs/provenance/README.md")
         })
+        ui.section(body, "PRIVACY & SAFETY · OFFLINE")
+        listOf("permissions" to "Permission guide", "privacy" to "Privacy policy", "terms" to "Terms & limitations", "security" to "Security & reporting").forEach { (id, title) ->
+            body.addView(ui.row(title, "Available offline", R.drawable.ic_info) { openDocument(id) })
+        }
         ui.section(body, "LICENSES · AVAILABLE OFFLINE")
         body.addView(ui.row("MIT license", "Original and fork notices, with the full license text", R.drawable.ic_info) {
             openDocument("mit")

@@ -11,11 +11,18 @@ class LegalDocumentActivity : AppCompatActivity() {
             "mit" -> "MIT license" to "legal/MIT.txt"
             "third-party" -> "Third-party software" to "legal/THIRD_PARTY_NOTICES.txt"
             "apache" -> "Apache License 2.0" to "legal/APACHE-2.0.txt"
+            "privacy" -> "Privacy policy" to "legal/PRIVACY.md"
+            "terms" -> "Terms & limitations" to "legal/TERMS.md"
+            "security" -> "Security & reporting" to "legal/SECURITY.md"
+            "permissions" -> "Permission guide" to "legal/PERMISSIONS.md"
             else -> { finish(); return }
         }
         val ui = InfoUi(this)
         val body = ui.screen(document.first)
-        val content = assets.open(document.second).bufferedReader(Charsets.UTF_8).use { it.readText() }
+        val raw = assets.open(document.second).bufferedReader(Charsets.UTF_8).use { it.readText() }
+        val content = if (document.second.endsWith(".md")) raw
+            .replace(Regex("(?m)^#{1,6} +"), "")
+            .replace(Regex("\\[([^]]+)]\\(([^)]+)\\)"), "$1 ($2)") else raw
         body.addView(ui.text(content, 14f).apply {
             setTextIsSelectable(true)
             setLineSpacing(ui.dp(3).toFloat(), 1f)

@@ -25,6 +25,7 @@ class GuardService : Service() {
         super.onCreate()
         GuardNotifications.ensureChannels(this)
         startForeground(GuardNotifications.ID_ONGOING, GuardNotifications.ongoing(this))
+        if (!Consent.accepted(this)) { stopSelf(); return }
         HealthWorker.schedule(this)
         observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
             override fun onChange(selfChange: Boolean) { enqueue("settings changed") }
@@ -49,12 +50,13 @@ class GuardService : Service() {
 
     private fun enqueue(source: String) { executor.execute { checkAndRepair(this, source) } }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (!Consent.accepted(this)) { stopSelf(); return START_NOT_STICKY }
         executor.execute { checkAndRepair(this, "requested check", intent?.getBooleanExtra("manual", false) == true) }
         return START_STICKY
     }
     override fun onDestroy() {
-        contentResolver.unregisterContentObserver(observer)
-        unregisterReceiver(receiver)
+        if (::observer.isInitialized) contentResolver.unregisterContentObserver(observer)
+        if (::receiver.isInitialized) unregisterReceiver(receiver)
         // Do not interrupt a rebind between removing and restoring its target.
         executor.shutdown()
         super.onDestroy()
@@ -66,11 +68,14 @@ class GuardService : Service() {
         private val lastAttempt = mutableMapOf<String, Long>()
         private val bindingSince = mutableMapOf<String, Long>()
         fun start(context: Context, manual: Boolean = false) {
+            if (!Consent.accepted(context)) return
             context.startForegroundService(Intent(context, GuardService::class.java).putExtra("manual", manual))
         }
         fun checkAndRepair(context: Context, source: String, manual: Boolean = false) {
             if (!checking.compareAndSet(false, true)) return
             try {
+                if (!Consent.accepted(context)) return
+                SelectionStore.reconcile(context)
                 if (GuardApp.pauseState(context).isPaused()) return
                 if (context.checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) != PackageManager.PERMISSION_GRANTED) return
                 val catalog = Targets.installed(context)
@@ -79,6 +84,7 @@ class GuardService : Service() {
                 val settings = AndroidSecureSettings(context.contentResolver)
                 val dump = TargetRuntime.read()
                 for (target in selected) {
+                    if (GuardApp.pauseState(context).isPaused() || !Consent.accepted(context)) break
                     if (!Targets.protected(context, target)) continue
                     val runtime = TargetRuntime.parse(dump, target.component, Targets.runtimeLabel(catalog, target))
                     val configured = settings.getInt(SecureKeys.ACCESSIBILITY_ENABLED, 0) == 1 &&

@@ -14,11 +14,13 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "io.github.soham.accessibilitykeeper"
+        applicationId = if (providers.gradleProperty("verificationBuild").orNull == "true")
+            "io.github.soham.accessibilitykeeper.verification" else "io.github.soham.accessibilitykeeper"
         minSdk = 33
         targetSdk = 36
         versionCode = 2
         versionName = "0.2.0"
+        testInstrumentationRunner = "io.github.haku4130.noscrollguard.VerificationInstrumentation"
     }
 
     signingConfigs {
@@ -80,6 +82,7 @@ val generateLegalAssets by tasks.registering(Sync::class) {
         rename { "MIT.txt" }
     }
     from(rootProject.file("legal")) { into("legal") }
+    from(rootProject.files("PRIVACY.md", "TERMS.md", "SECURITY.md", "docs/PERMISSIONS.md")) { into("legal") }
     into(legalAssetsDirectory)
 }
 android.sourceSets.getByName("main").assets.srcDir(legalAssetsDirectory)

@@ -21,12 +21,20 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.AboutActivity" android:exported="false" />
+        <activity android:name=".ui.ConsentActivity" android:exported="false" />
         <activity android:name=".ui.LegalDocumentActivity" android:exported="false" />
         <service android:name=".service.GuardService" android:exported="false" android:foregroundServiceType="specialUse">
             <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="Keeps user-selected accessibility services available" />
         </service>
         <receiver android:name=".boot.BootReceiver" android:exported="true">
             <intent-filter><action android:name="android.intent.action.BOOT_COMPLETED" /></intent-filter>
+        </receiver>
+        <!-- Package removals are protected system broadcasts. Updates retain choices. -->
+        <receiver android:name=".PackageChangeReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <data android:scheme="package" />
+            </intent-filter>
         </receiver>
     </application>
 </manifest>

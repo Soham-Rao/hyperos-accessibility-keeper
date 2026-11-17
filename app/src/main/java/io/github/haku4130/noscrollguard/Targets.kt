@@ -46,13 +46,10 @@ object Targets {
             }.map(::canonicalService).toSet()
     }.getOrDefault(emptySet())
 
-    fun protected(context: Context, target: GuardTarget): Boolean =
-        context.getSharedPreferences("targets", Context.MODE_PRIVATE)
-            .getBoolean(canonicalService(target.component), false)
+    fun protected(context: Context, target: GuardTarget): Boolean = SelectionStore.selected(context, target)
 
     fun setProtected(context: Context, target: GuardTarget, enabled: Boolean) {
-        context.getSharedPreferences("targets", Context.MODE_PRIVATE).edit()
-            .putBoolean(canonicalService(target.component), enabled).apply()
+        SelectionStore.set(context, target, enabled)
     }
 
     // Some HyperOS builds expose only labels in the bound-service dump. A duplicate

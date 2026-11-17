@@ -67,6 +67,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var moreButton: ImageButton
     private var busy = false
     private var generation = 0
+    private var consentPromptShown = false
+    private var updatingSwitches = false
     private val refresh = object : Runnable {
         override fun run() { render(); handler.postDelayed(this, 4000) }
     }
@@ -122,16 +124,31 @@ class MainActivity : AppCompatActivity() {
                 if (showingActivity) showApps() else { isEnabled = false; onBackPressedDispatcher.onBackPressed() }
             }
         })
-        GuardService.start(this)
-        if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
-            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 0)
+        SelectionStore.reconcile(this)
     }
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("query", query); outState.putBoolean("protectedOnly", protectedOnly)
         outState.putBoolean("activity", showingActivity); super.onSaveInstanceState(outState)
         outState.putBoolean("settings", settingsPage)
     }
-    override fun onResume() { super.onResume(); if (settingsPage) showSettings(); handler.post(refresh) }
+    override fun onResume() {
+        super.onResume()
+        if (!Consent.accepted(this)) {
+            if (!consentPromptShown) {
+                consentPromptShown = true
+                startActivity(Intent(this, ConsentActivity::class.java))
+            }
+        } else {
+            GuardService.start(this)
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED &&
+                !getSharedPreferences("consent", MODE_PRIVATE).getBoolean("notification_asked", false)) {
+                getSharedPreferences("consent", MODE_PRIVATE).edit().putBoolean("notification_asked", true).apply()
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 0)
+            }
+        }
+        if (settingsPage) showSettings()
+        handler.post(refresh)
+    }
     override fun onPause() { handler.removeCallbacks(refresh); super.onPause() }
     override fun onDestroy() { executor.shutdownNow(); super.onDestroy() }
 
@@ -212,6 +229,12 @@ class MainActivity : AppCompatActivity() {
                 trackTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()), intArrayOf(accent, muted))
                 isChecked = Targets.protected(this@MainActivity, target)
                 setOnCheckedChangeListener { _, enabled ->
+                    if (updatingSwitches) return@setOnCheckedChangeListener
+                    if (enabled && !Consent.accepted(this@MainActivity)) {
+                        isChecked = false
+                        startActivity(Intent(this@MainActivity, ConsentActivity::class.java))
+                        return@setOnCheckedChangeListener
+                    }
                     Targets.setProtected(this@MainActivity, target, enabled)
                     if (enabled) RecoveryStatus.setNeedsOpen(this@MainActivity, target, false)
                     GuardApp.eventLog(this@MainActivity).append(System.currentTimeMillis(), "[user] ${target.name}: protection ${if (enabled) "on" else "off"}")
@@ -233,14 +256,16 @@ class MainActivity : AppCompatActivity() {
         val selected = catalog.count { Targets.protected(this, it) }
         val paused = GuardApp.pauseState(this).isPaused()
         val ready = checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED
-        title.text = when { !ready -> "One-time setup needed"; paused -> "Protection paused"; selected == 0 -> "Choose your apps"; else -> "Protection is on" }
+        val accepted = Consent.accepted(this)
+        title.text = when { !accepted -> "Review safety first"; !ready -> "One-time setup needed"; paused -> "Protection paused"; selected == 0 -> "Choose your apps"; else -> "Protection is on" }
         summary.text = when {
+            !accepted -> "Recovery is off until you acknowledge"
             !ready -> "Connect to a computer to finish setup"
             paused -> "Resumes automatically after 30 minutes"
             selected == 1 -> "1 app protected"
             else -> "$selected apps protected"
         }
-        pause.text = if (!ready) "Set up" else if (paused) "Resume" else "Pause"
+        pause.text = if (!accepted) "Review" else if (!ready) "Set up" else if (paused) "Resume" else "Pause"
         title.setTextColor(if (paused || !ready) warning else accent)
         protectedChip.text = "Protected · $selected"
     }
@@ -265,6 +290,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun togglePause() {
+        if (!Consent.accepted(this)) { startActivity(Intent(this, ConsentActivity::class.java)); return }
         if (checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) != PackageManager.PERMISSION_GRANTED) { showSetup(); return }
         val state = GuardApp.pauseState(this)
         if (state.isPaused()) state.resume() else state.pauseFor(DEFAULT_PAUSE_MS)
@@ -357,6 +383,17 @@ class MainActivity : AppCompatActivity() {
             }))
         }
         section("PREFERENCES")
+        val retention = SwitchCompat(this).apply {
+            text = "Keep choices after reinstalling apps"
+            setTextColor(ink); textSize = 15f; minHeight = dp(64)
+            setPadding(dp(14), dp(12), dp(14), dp(12)); background = rounded(surface)
+            thumbTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()), intArrayOf(accent, muted))
+            trackTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()), intArrayOf(accent, muted))
+            isChecked = SelectionStore.retain(this@MainActivity)
+            setOnCheckedChangeListener { _, enabled -> SelectionStore.setRetain(this@MainActivity, enabled) }
+        }
+        body.addView(retention)
+        body.addView(label("Off by default. Applies to selected apps, not reinstalling Keeper. When on, only the same service and signing identity can retain a choice. New services always start off.", 12f, muted).apply { setPadding(dp(14), dp(8), dp(14), dp(16)) })
         val mode = getSharedPreferences("appearance", MODE_PRIVATE).getInt("mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         item(R.drawable.ic_appearance, "Appearance", when (mode) {
             AppCompatDelegate.MODE_NIGHT_YES -> "Dark"; AppCompatDelegate.MODE_NIGHT_NO -> "Light"; else -> "Follow phone settings"
@@ -366,6 +403,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName))
         }
         section("TOOLS & HELP")
+        item(R.drawable.ic_info, "Privacy, safety & terms", "Permission guide, policies and your acknowledgment") {
+            startActivity(Intent(this, ConsentActivity::class.java))
+        }
         item(R.drawable.ic_accessibility, "Accessibility settings", "Manage your phone's accessibility services") {
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
@@ -464,10 +504,11 @@ class MainActivity : AppCompatActivity() {
                 val states = discovered.associate { target ->
                     val runtime = TargetRuntime.parse(dump, target.component, Targets.runtimeLabel(discovered, target))
                     val status = when {
+                        !Consent.accepted(this) -> "Recovery off · review safety"
                         !master || canonicalService(target.component) !in listed -> "Waiting for accessibility"
                         runtime?.bound == true && !runtime.crashed -> "Protected · running"
                         RecoveryStatus.needsOpen(this, target) -> "Open app to finish connecting"
-                        runtime == null -> "Protected · enabled"
+                        runtime == null -> "Enabled · runtime unverified"
                         runtime.crashed -> "Recovery needed"
                         else -> "Connecting…"
                     }
@@ -479,6 +520,9 @@ class MainActivity : AppCompatActivity() {
                         discovered.forEach { target ->
                             val selected = Targets.protected(this, target)
                             rows[target.component]?.let { row ->
+                                updatingSwitches = true
+                                row.toggle.isChecked = selected
+                                updatingSwitches = false
                                 row.status.text = if (selected) states[target.component] else "Not protected"
                                 row.status.setTextColor(if (!selected) muted else if (states[target.component]?.startsWith("Protected") == true) accent else warning)
                             }

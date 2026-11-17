@@ -44,3 +44,5 @@ Keeper uses powerful setup permissions to **monitor and restore/rebind your sele
 Maintained by [Soham-Rao](https://github.com/Soham-Rao). Based on [HyperOS Accessibility Guard by haku4130](https://github.com/haku4130/hyperos-accessibility-guard), with the original [MIT license](LICENSE) retained. This fork adds selectable multi-app protection, a redesigned interface, safer list-preserving recovery and an opening-required fallback. No upstream or device-vendor endorsement is implied.
 
 [Fork changes](CHANGES.md) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [Source provenance](docs/provenance/README.md)
+
+[Privacy](PRIVACY.md) · [Terms](TERMS.md) · [Security](SECURITY.md) · [Permission guide](docs/PERMISSIONS.md)

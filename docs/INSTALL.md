@@ -98,7 +98,11 @@ Include model, Android/HyperOS version, Keeper version and steps. Logs are optio
 
 ## Stop protection or remove Keeper
 
-Turn off the relevant protection switch before deliberately disabling that service in Android Settings. Uninstalling Keeper removes Keeper; it does not intentionally disable other apps' existing accessibility services. Manage those separately in Android Settings.
+On first launch, read the safety summary and policies and acknowledge before recovery can start. Existing choices are preserved during an update, but recovery waits for acknowledgment of the new policy revision. Settings and About provide the same documents offline.
+
+Settings → Keep choices after reinstalling apps defaults off. With it off, removal or a detected new installation clears that service's protection choice. With it on, only the same service identifier and signing certificate can retain a previous choice. New service components start off. This applies to target apps; reinstalling Keeper normally resets Keeper's own choices. The first upgrade to this feature records identities for currently installed selections; it cannot reconstruct an installation history from before that baseline existed.
+
+Turn off the relevant protection switch before deliberately disabling that service in Android Settings. Allow a few seconds for a rebind already in progress to finish; subsequent attempts stop. Pause suspends subsequent recovery for 30 minutes. Uninstalling Keeper removes Keeper; it does not intentionally disable other apps' existing accessibility services. Manage those separately in Android Settings.
 
 To revoke the computer-granted permissions while keeping Keeper installed:
 

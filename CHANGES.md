@@ -6,6 +6,9 @@ Starting upstream revision: [`959ce7cd924c35847426d0f8e730bf90bf25ba1b`](https:/
 
 ## Material changes in this fork
 
+- Require a versioned safety acknowledgment before recovery starts, with offline permission, privacy, terms and security documents.
+- Default target-app reinstall retention to off. When opted in, preserve only existing service choices with the same signing identity; detect missed removals using installation identity.
+
 - Discover installed accessibility services rather than hardcode one target application. Keep separate services in one app independently selectable.
 - Store explicit per-service protection choices; newly discovered services start unselected.
 - Rebind only an affected selected service, preserve unrelated service entries, and reread the list before restoring the target. Do not deliberately turn the master switch off during a repair.

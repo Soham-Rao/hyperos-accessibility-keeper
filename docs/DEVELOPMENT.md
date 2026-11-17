@@ -95,6 +95,8 @@ Keep raw captures, device identifiers, machine settings and signing files out of
 
 ## Updating dependencies and notices
 
+The root `PRIVACY.md`, `TERMS.md`, `SECURITY.md` and `docs/PERMISSIONS.md` are also bundled as offline assets. Changes to these files correctly trigger Android CI because they affect the APK. Keep them aligned with actual behavior and bump `Consent.REVISION` when users must review a changed safety acknowledgment. Test both fresh installs and an upgrade with existing selections; do not silently clear selected apps during migration.
+
 The build checks that `legal/runtime-dependencies.json` matches the resolved release runtime component list. It also packages the canonical root MIT license and files under `legal/` into APK assets, used by the offline About/license screens.
 
 When changing runtime dependencies:
