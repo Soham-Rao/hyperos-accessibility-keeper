@@ -1,30 +1,100 @@
-name: build
+name: Android CI
 
 on:
   push:
     branches: [main]
+    paths:
+      - 'app/**'
+      - 'gradle/**'
+      - '*.gradle.kts'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - '.github/workflows/build.yml'
   pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'app/**'
+      - 'gradle/**'
+      - '*.gradle.kts'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+    inputs:
+      upload_debug_apk:
+        description: 'Keep the debug APK as a temporary artifact (3 days)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Tests, lint and debug build
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '17'
 
-      - uses: android-actions/setup-android@v3
+      # Hosted Ubuntu already contains Android command-line tools and SDK licenses.
+      # Do not download another tools installation or request the removed 'tools' package.
+      - name: Ensure required Android SDK packages
+        shell: bash
+        run: |
+          packages=()
+          if [[ ! -f "$ANDROID_HOME/platforms/android-36/android.jar" ]]; then
+            packages+=("platforms;android-36")
+          fi
+          if [[ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]]; then
+            packages+=("build-tools;35.0.0")
+          fi
+          if (( ${#packages[@]} )); then
+            sdkmanager "${packages[@]}"
+          else
+            echo 'Required Android SDK packages are already installed.'
+          fi
 
-      - name: Run unit tests
-        run: ./gradlew test
+      - name: Restore Gradle build cache
+        uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947 # v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug
+      - name: Test, lint and build once
+        run: ./gradlew --no-daemon --build-cache --console=plain :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
 
-      - uses: actions/upload-artifact@v4
+      - name: Keep failure reports briefly
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: android-failure-reports
+          path: |
+            app/build/reports/tests/testDebugUnitTest/
+            app/build/reports/lint-results-debug.*
+          if-no-files-found: ignore
+          retention-days: 3
+
+      - name: Keep APK only when explicitly requested
+        if: github.event_name == 'workflow_dispatch' && inputs.upload_debug_apk
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: app-debug
           path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 3
+          compression-level: 0
