@@ -21,10 +21,10 @@ The maintainer supplied four screenshots showing the upstream repository/license
 
 | Evidence file | SHA-256 |
 | --- | --- |
-| `upstream-repository-mit-2026-11-18.png` | `f2a454ddaf3c443d328b8bafe6ba5ffd3afbad90e30917e810fac95671f279db` |
-| `upstream-license-959ce7c-2026-11-18.png` | `2b064eb8759d7ca3d20dbb5bfe63292d044c208d5dda0aa315d4917be0864466` |
-| `keeper-preserved-history-2026-11-18.png` | `4a7220d5a54b39b58c40a305cbf65da4b1a17970a6b7c1cf175f31b373404b04` |
-| `upstream-commit-959ce7c-2026-11-18.png` | `73cd8663bac55843a5bfd58d79949c61bca39a37334c62d8423ae3ce606eda60` |
+| `upstream-repository-mit-2026-11-18.png` | `73cd8663bac55843a5bfd58d79949c61bca39a37334c62d8423ae3ce606eda60` |
+| `upstream-license-959ce7c-2026-11-18.png` | `4a7220d5a54b39b58c40a305cbf65da4b1a17970a6b7c1cf175f31b373404b04` |
+| `keeper-preserved-history-2026-11-18.png` | `2b064eb8759d7ca3d20dbb5bfe63292d044c208d5dda0aa315d4917be0864466` |
+| `upstream-commit-959ce7c-2026-11-18.png` | `f2a454ddaf3c443d328b8bafe6ba5ffd3afbad90e30917e810fac95671f279db` |
 
 The screenshots omit browser address bars and a capture clock. The date is the record/save date; precise capture time is not independently established. The private metadata preserves the observed pre-rename creation/modification times in UTC and IST, recorded source URLs, sizes, hashes and backup mapping. Filesystem times may describe saving or copying rather than capture and are not trusted timestamps.
 
