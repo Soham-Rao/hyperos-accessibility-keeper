@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="title description">
+  <title id="title">Accessibility Keeper overview — demo data</title>
+  <desc id="description">Three illustrated cards show choosing services, recovering a service, and opening an app when it needs help. Names and events are invented, not actual compatibility results.</desc>
+  <rect width="1200" height="440" rx="26" fill="#0d1117"/>
+  <g font-family="system-ui, -apple-system, Segoe UI, sans-serif">
+    <path d="M46 31l17 7v14c0 12-8 20-17 24-9-4-17-12-17-24V38z" fill="#8be5c2"/>
+    <path d="m38 51 6 6 11-13" fill="none" stroke="#19372f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="80" y="58" font-size="27" font-weight="650" fill="#edf3f9">Accessibility Keeper</text>
+    <text x="1170" y="55" text-anchor="end" font-size="14" fill="#a2afbf">ILLUSTRATION · SAMPLE DATA</text>
+    <g transform="translate(28 104)">
+      <rect width="364" height="300" rx="20" fill="#171d25"/>
+      <text x="22" y="39" font-size="19" font-weight="650" fill="#edf3f9">1  Choose your apps</text>
+      <text x="22" y="68" font-size="14" fill="#a2afbf">Only your selections are protected.</text>
+      <rect x="18" y="93" width="328" height="69" rx="13" fill="#0d1117"/>
+      <text x="34" y="120" font-size="17" fill="#edf3f9">Voice helper</text>
+      <text x="34" y="143" font-size="13" fill="#8be5c2">Protected · running</text>
+      <rect x="282" y="116" width="44" height="24" rx="12" fill="#285c4c"/>
+      <circle cx="313" cy="128" r="13" fill="#8be5c2"/>
+      <rect x="18" y="175" width="328" height="69" rx="13" fill="#0d1117"/>
+      <text x="34" y="202" font-size="17" fill="#edf3f9">Focus helper</text>
+      <text x="34" y="225" font-size="13" fill="#a2afbf">Not protected</text>
+      <rect x="282" y="198" width="44" height="24" rx="12" fill="#3a4553"/>
+      <circle cx="295" cy="210" r="13" fill="#a2afbf"/>
+      <text x="22" y="277" font-size="13" fill="#a2afbf">Use the switch to change protection.</text>
+    </g>
+    <g transform="translate(418 104)">
+      <rect width="364" height="300" rx="20" fill="#171d25"/>
+      <text x="22" y="39" font-size="19" font-weight="650" fill="#edf3f9">2  See what happened</text>
+      <text x="22" y="68" font-size="14" fill="#a2afbf">Clear status and recent activity.</text>
+      <rect x="18" y="93" width="328" height="151" rx="13" fill="#19372f"/>
+      <circle cx="51" cy="127" r="14" fill="none" stroke="#8be5c2" stroke-width="2"/>
+      <path d="m44 127 5 5 9-11" fill="none" stroke="#8be5c2" stroke-width="2" stroke-linecap="round"/>
+      <text x="77" y="133" font-size="17" font-weight="600" fill="#8be5c2">Accessibility restored</text>
+      <text x="34" y="173" font-size="16" fill="#edf3f9">Voice helper</text>
+      <text x="34" y="201" font-size="14" fill="#c3e8d9">The service is bound again.</text>
+      <text x="34" y="226" font-size="12" fill="#a2afbf">Sample event</text>
+      <text x="22" y="277" font-size="13" fill="#a2afbf">Recovery depends on the app and phone.</text>
+    </g>
+    <g transform="translate(808 104)">
+      <rect width="364" height="300" rx="20" fill="#171d25"/>
+      <text x="22" y="39" font-size="19" font-weight="650" fill="#edf3f9">3  Know when to step in</text>
+      <text x="22" y="68" font-size="14" fill="#a2afbf">Some apps need to be opened.</text>
+      <rect x="18" y="93" width="328" height="151" rx="13" fill="#0d1117"/>
+      <text x="34" y="126" font-size="17" fill="#edf3f9">Gesture helper</text>
+      <text x="34" y="157" font-size="14" fill="#f4cc83">Open app to finish connecting</text>
+      <rect x="34" y="180" width="296" height="44" rx="22" fill="#19372f"/>
+      <text x="182" y="207" text-anchor="middle" font-size="15" font-weight="600" fill="#8be5c2">Open app ↗</text>
+      <text x="22" y="277" font-size="13" fill="#a2afbf">Pause or stop protection at any time.</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,21 @@
+name: Suggest an improvement
+description: An idea, usability improvement or documentation request.
+title: '[Suggestion]: '
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Tell us what is difficult and who would benefit.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: Describe the improvement. Screenshots or sketches are welcome if they contain no private information.
+  - type: textarea
+    id: tradeoffs
+    attributes:
+      label: Alternatives or tradeoffs
+      description: Optional thoughts about permissions, battery use, complexity or other ways to solve it.

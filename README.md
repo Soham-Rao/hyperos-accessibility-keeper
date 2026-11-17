@@ -1,38 +1,44 @@
-# Accessibility Keeper — v2
+# Accessibility Keeper
 
-Local fork of [HyperOS Accessibility Guard](https://github.com/haku4130/hyperos-accessibility-guard), retaining its MIT license. This version discovers installed accessibility services directly from Android and lets you choose which ones to protect. Tested on a POCO F6 running HyperOS 3 / Android 16.
+Keep the accessibility apps **you choose** running.
 
-## Controls
+[![Android CI](https://github.com/Soham-Rao/hyperos-accessibility-keeper/actions/workflows/build.yml/badge.svg)](https://github.com/Soham-Rao/hyperos-accessibility-keeper/actions/workflows/build.yml)
+[![Experimental beta](https://img.shields.io/badge/status-experimental_beta-e9bc72)](docs/TESTING.md)
+[![MIT license](https://img.shields.io/badge/license-MIT-88dfbf)](LICENSE)
+[![Android 13 or newer](https://img.shields.io/badge/Android-13%2B-88dfbf)](docs/INSTALL.md)
 
-Enable each app's protection switch to restore its accessibility service automatically when disabled, crashed, or unbound. Turn protection off before intentionally disabling accessibility in Android Settings. Turning protection off leaves the current Android setting unchanged. Pause suspends all recovery for 30 minutes.
+<picture>
+  <source media="(max-width: 640px)" srcset="docs/media/overview-mobile.svg">
+  <img src="docs/media/overview.svg" alt="Illustrated Keeper interface with invented apps: choose protection, see recovery, and open an app when needed. Demo data, not a device screenshot.">
+</picture>
 
-The home screen includes app icons, search, All apps / Protected filters, individual switches, and pause/resume. Recent activity is on a separate screen, with a shareable full journal. More options opens a quick menu and a dedicated Settings page for recovery setup, autostart guidance, notifications, appearance, help, and about. Appearance can follow the phone or use light/dark mode, and is saved locally. Help and setup use matching rounded panels. Long-press an app to open it or accessibility settings. Existing v1 selections are retained; newly discovered services default to unprotected. Multiple services in one app remain separate entries. Runtime state requires the ADB-granted DUMP permission and may be unavailable on some devices. The keeper never opens a target app automatically or starts autoclicking.
+> **Public beta preparation:** signed public downloads are not available yet. The source can be built now. Compatibility is confirmed on **POCO F6 · HyperOS 3 · Android 16**; other devices need testing.
 
-Recovery removes only the affected service, waits for unbinding, merges it into a freshly read service list, and enables the master switch. Other service entries are preserved. Recovery verifies the settings and attempts to verify binding. A reported settings repair alone does not prove the target app's features are working.
+Keeper finds your installed accessibility services and attempts to restore the ones you protect when they stop. Some apps still need to be opened to finish connecting.
 
-Only the switch changes protection. Tapping an app tile opens a small options panel with Open app. Activity cards that ask you to open an app launch it directly when tapped, as do the corresponding recovery notifications. Keeper gives an in-progress Android bind 30 seconds to settle. If a recovery still cannot bind the service, it records that the app needs to be opened and avoids repeated automatic rebinds while the accessibility settings remain correct. Check now allows an explicit retry. A later healthy check clears this state. This does not claim to fix an unresponsive third-party app silently.
+## Start here
 
-A foreground service observes setting changes, checks on screen/unlock, and runs a health check every 30 seconds while the screen is on. WorkManager adds a 15-minute backstop. Repeated failures are throttled for 60 seconds until a healthy check resets the throttle. Boot startup is included; HyperOS autostart still needs to be allowed manually. Force-stopping the keeper prevents recovery until it is reopened. Long-term persistence requires testing on the actual phone.
+| I want to… | Go to |
+| --- | --- |
+| Install and set up Keeper | [Step-by-step installation](docs/INSTALL.md) |
+| Understand permissions or stop protection | [Safety and permissions](docs/SAFETY.md) |
+| Report a bug or suggest something | [Open an issue](https://github.com/Soham-Rao/hyperos-accessibility-keeper/issues/new/choose) |
+| Check compatibility or help test | [Testing and known limitations](docs/TESTING.md) |
+| Build, fork or change the app | [Developer guide](docs/DEVELOPMENT.md) · [Contributing](CONTRIBUTING.md) |
+| Find published APKs when available | [Releases](https://github.com/Soham-Rao/hyperos-accessibility-keeper/releases) |
 
-## Windows build and install
+## Everyday use
 
-Use Java 17, Android platform 36, and the included Gradle 8.13 wrapper. Set `JAVA_HOME`, `GRADLE_USER_HOME` (prefer a drive with ample free space), and `sdk.dir` in ignored `local.properties` as appropriate for the machine.
+1. **Choose apps:** turn on their protection switches. New apps start unselected.
+2. **Let Keeper help:** check the running status or Recent activity. Tap an app tile for options.
+3. **Stay in control:** pause all recovery, or turn off a protection switch before deliberately disabling that service in Android Settings.
 
-```powershell
-.\gradlew.bat testDebugUnitTest assembleDebug lintDebug
-.\install.ps1 -Serial YOUR_ADB_DEVICE_SERIAL
-```
+**Switch off means stop protection.** It leaves the service's existing Android accessibility setting unchanged. Keeper never starts clicking or opens another app without your action.
 
-The installer uses the sibling `AndroidSdk/platform-tools/adb.exe` by default and accepts `-Adb` for another location. It installs the debug APK, grants WRITE_SECURE_SETTINGS, DUMP, and notification access, adds the keeper to the battery whitelist, and opens its controls. Approve the USB installation on the unlocked phone, then select the protection switches you want.
+## Before granting access
 
-Package: `io.github.soham.accessibilitykeeper`. The upstream namespace is retained internally so this is a separate installation from the original guard. This remains a local version; broader device validation and publication are deferred.
+Keeper uses powerful setup permissions to **monitor and restore/rebind your selected services**. Only protect third-party accessibility apps you trust. Read [what each permission does](docs/SAFETY.md) before setup. Recovery is best effort; it is not guaranteed across all apps or HyperOS versions.
 
-Private planning and device-test artifacts live under ignored `misc/`. Upstream investigation notes remain in `docs/` and describe the original NoScroll app and device, rather than this fork's verified behavior.
+## Credits
 
-## Downloaded apps discovery
-
-The list uses `AccessibilityManager.getInstalledAccessibilityServiceList()`, service labels, icons and component identities. Complete package visibility is required: the narrower service-intent query was verified to omit installed apps on the POCO F6. QUERY_ALL_PACKAGES supports this core discovery feature; it does not enable services by itself.
-
-The phone's Settings resource arrays identify services in built-in categories. On Xiaomi/HyperOS, additional system-service exclusions mirror the POCO F6 Settings APK's AccessibilitySettings / RestrictedPreferenceHelper. These exclude system categories rather than maintain a fixed list of supported user apps. Private OEM cloud policy is not a public Android API; exact matching on future firmware or other manufacturers needs validation.
-
-Android reference: [Settings accessibility service discovery and categorization](https://android.googlesource.com/platform/packages/apps/Settings/+/refs/heads/main/src/com/android/settings/accessibility/AccessibilitySettings.java).
+Maintained by [Soham-Rao](https://github.com/Soham-Rao). Based on [HyperOS Accessibility Guard by haku4130](https://github.com/haku4130/hyperos-accessibility-guard), with the original [MIT license](LICENSE) retained. This fork adds selectable multi-app protection, a redesigned interface, safer list-preserving recovery and an opening-required fallback. No upstream or device-vendor endorsement is implied.
