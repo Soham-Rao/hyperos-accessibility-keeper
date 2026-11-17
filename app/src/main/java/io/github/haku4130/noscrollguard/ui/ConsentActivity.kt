@@ -15,10 +15,10 @@ class ConsentActivity : AppCompatActivity() {
         val ui = InfoUi(this)
         val alreadyAccepted = Consent.accepted(this)
         val body = ui.screen(if (alreadyAccepted) "Privacy & safety" else "Before you begin")
-        body.addView(ui.card("Choose carefully", "Keeper actively restores accessibility access for services you select. Those third-party services may read screen content or interact with your apps. Only choose apps you trust."))
-        body.addView(ui.card("Powerful permissions", "Secure-settings access can change system settings. Diagnostic access can read broader system information. Keeper uses these to restore selected services and check their status; it does not limit what the permissions themselves allow."))
-        body.addView(ui.card("You're in control", "New services start off. Turn protection off before disabling a service in Android Settings. Pause suspends recovery for 30 minutes. Recovery is best effort and some apps need opening afterward. Uninstalling Keeper stops its work but does not switch off other apps' accessibility access."))
-        body.addView(ui.card("Private on your phone", "Choices and a limited activity journal stay locally. Keeper has no internet permission or analytics. Review logs before choosing to share them. This experimental beta is provided without warranty under the MIT license, subject to applicable law."))
+        body.addView(ui.card("Choose carefully", "Keeper actively restores accessibility access for services you select. Those third-party services may read screen content or interact with your apps. Only choose apps you trust.", R.drawable.ic_accessibility))
+        body.addView(ui.card("Powerful permissions", "Secure-settings access can change system settings. Diagnostic access can read broader system information. Keeper uses these to restore selected services and check their status; it does not limit what the permissions themselves allow.", R.drawable.ic_settings))
+        body.addView(ui.card("You're in control", "New services start off. Turn protection off before disabling a service in Android Settings. Pause suspends recovery for 30 minutes. Recovery is best effort and some apps need opening afterward. Uninstalling Keeper stops its work but does not switch off other apps' accessibility access.", R.drawable.ic_power))
+        body.addView(ui.card("Private on your phone", "Choices and a limited activity journal stay locally. Keeper has no internet permission or analytics. Review logs before choosing to share them. This experimental beta is provided without warranty under the MIT license, subject to applicable law.", R.drawable.ic_info))
         listOf("permissions" to "Permission guide", "privacy" to "Privacy policy", "terms" to "Terms & limitations", "security" to "Security & reporting").forEach { (id, title) ->
             body.addView(ui.row(title, "Read offline", R.drawable.ic_info) {
                 startActivity(Intent(this, LegalDocumentActivity::class.java).putExtra("document", id))
@@ -47,3 +47,4 @@ class ConsentActivity : AppCompatActivity() {
             else "You can leave this screen without agreeing. Automatic recovery stays off. Your existing selections are preserved.", 12f, ui.muted))
     }
 }
+

@@ -8,7 +8,7 @@ This project has not received an independent security audit. Device coverage is 
 
 Do not publish exploit details, secrets or unredacted logs in an issue. Check the repository's Security tab for a private reporting option. If one is unavailable, open a minimal issue requesting a private contact method without including the vulnerability or personal data. The maintainer must arrange a private channel before you share details. No dedicated security inbox, response SLA or bounty is currently promised.
 
-Project: https://github.com/Soham-Rao/hyperos-accessibility-keeper
+[Project repository](https://github.com/Soham-Rao/hyperos-accessibility-keeper)
 
 ## Useful non-sensitive details
 
@@ -18,6 +18,6 @@ Include Keeper version, device model, Android and firmware versions, steps, expe
 
 Download only artifacts linked by this repository and verify release signatures/checksums when signed releases are available. There is currently no published signed beta release from this fork. Do not treat CI debug artifacts as stable releases.
 
-Turn off protection before disabling a target service. Revoke WRITE_SECURE_SETTINGS to prevent further settings repair, revoke DUMP to remove diagnostic access, or uninstall Keeper. Uninstalling Keeper leaves other apps' accessibility settings to Android and your own choices. Refer to docs/INSTALL.md for commands.
+Turn off protection before disabling a target service. Revoke WRITE_SECURE_SETTINGS to prevent further settings repair, revoke DUMP to remove diagnostic access, or uninstall Keeper. Uninstalling Keeper leaves other apps' accessibility settings to Android and your own choices. Refer to the [installation guide](docs/INSTALL.md) for commands.
 
 The repository retains upstream license and source history. Security work must preserve those notices. Policies and warnings reduce surprises; they do not constitute a completed security audit or guarantee that software is safe.

@@ -24,4 +24,4 @@ The MIT license supplies the software "AS IS", without warranty, and disclaims a
 
 There is no implied endorsement by the upstream author, Xiaomi, POCO, Google or third-party app developers. Please report reproducible issues with sensitive information removed.
 
-Full license: https://github.com/Soham-Rao/hyperos-accessibility-keeper/blob/main/LICENSE
+[Full MIT license](LICENSE)

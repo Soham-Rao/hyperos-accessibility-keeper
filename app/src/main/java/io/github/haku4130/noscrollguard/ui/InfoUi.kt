@@ -62,11 +62,21 @@ internal class InfoUi(private val activity: AppCompatActivity) {
     fun section(parent: LinearLayout, title: String) {
         parent.addView(text(title, 12f, muted, true).apply { setPadding(dp(4), dp(20), 0, dp(12)) })
     }
-    fun card(title: String, detail: String): View = vertical().apply {
+    fun card(title: String, detail: String, icon: Int? = null): View = vertical().apply {
         background = rounded(surface); setPadding(dp(18), dp(18), dp(18), dp(18))
         layoutParams = LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(10) }
-        addView(text(title, 17f, ink, true)); addView(space(9))
-        addView(text(detail, 14f, muted).apply { setLineSpacing(dp(3).toFloat(), 1f) })
+        val heading = LinearLayout(activity).apply { gravity = Gravity.CENTER_VERTICAL }
+        if (icon != null) heading.addView(ImageView(activity).apply {
+            setImageResource(icon); imageTintList = ColorStateList.valueOf(accent)
+            setPadding(dp(8), dp(8), dp(8), dp(8)); background = rounded(accentBg, 12)
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }, LinearLayout.LayoutParams(dp(38), dp(38)).apply { marginEnd = dp(12) })
+        heading.addView(text(title, 17f, ink, true), LinearLayout.LayoutParams(0, -2, 1f))
+        addView(heading)
+        if (detail.isNotBlank()) {
+            addView(space(12))
+            addView(text(detail, 14f, muted).apply { setLineSpacing(dp(3).toFloat(), 1f) })
+        }
     }
     fun row(title: String, detail: String, icon: Int, action: () -> Unit): View = LinearLayout(activity).apply {
         gravity = Gravity.CENTER_VERTICAL; minimumHeight = dp(78)

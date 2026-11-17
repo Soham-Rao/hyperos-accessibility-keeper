@@ -30,6 +30,6 @@ AndroidX WorkManager adds WAKE_LOCK for scheduled work and ACCESS_NETWORK_STATE 
 
 Turn a protection switch off to stop subsequent recovery for that service. Its current Android setting stays unchanged. An in-flight rebind may finish over a few seconds. Pause suspends subsequent recovery for 30 minutes. Turn protection off and let any rebind finish before intentionally disabling a service in Android Settings. Revoke the write grant to prevent further secure-settings writes. Uninstalling Keeper stops Keeper's work and does not intentionally disable other apps' accessibility services.
 
-Setup and revocation commands: https://github.com/Soham-Rao/hyperos-accessibility-keeper/blob/main/docs/INSTALL.md
+[Setup and revocation commands](https://github.com/Soham-Rao/hyperos-accessibility-keeper/blob/main/docs/INSTALL.md)
 
-Android permission reference: https://developer.android.com/reference/android/Manifest.permission
+[Android permission reference](https://developer.android.com/reference/android/Manifest.permission)

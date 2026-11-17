@@ -26,6 +26,6 @@ Keeping choices after reinstalling target apps is off by default. When enabled, 
 
 ## Changes and contact
 
-This version is bundled offline with the app and published in the project repository. A changed acknowledgment revision requires review before automatic recovery resumes. For non-sensitive questions use the project's GitHub issues. For sensitive reports follow SECURITY.md; do not disclose private logs publicly.
+This version is bundled offline with the app and published in the project repository. A changed acknowledgment revision requires review before automatic recovery resumes. For non-sensitive questions use the project's GitHub issues. For sensitive reports follow [security reporting](SECURITY.md); do not disclose private logs publicly.
 
-Project: https://github.com/Soham-Rao/hyperos-accessibility-keeper
+[Project repository](https://github.com/Soham-Rao/hyperos-accessibility-keeper)
