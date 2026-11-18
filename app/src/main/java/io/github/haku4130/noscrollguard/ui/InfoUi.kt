@@ -53,14 +53,14 @@ internal class InfoUi(private val activity: AppCompatActivity) {
             setPadding(dp(12), dp(12), dp(12), dp(12)); background = rounded(surface, 24)
             contentDescription = "Back"; setOnClickListener { activity.finish() }
         }, LinearLayout.LayoutParams(dp(48), dp(48)))
-        toolbar.addView(text(title, 24f, ink, true).apply { setPadding(dp(14), 0, 0, 0) }, LinearLayout.LayoutParams(0, -2, 1f))
+        toolbar.addView(text(title, 24f, ink, true).apply { setPadding(dp(14), 0, 0, 0); ViewCompat.setAccessibilityHeading(this, true) }, LinearLayout.LayoutParams(0, -2, 1f))
         root.addView(toolbar); root.addView(space(20))
         val body = vertical().apply { setPadding(0, 0, 0, dp(8)) }
-        root.addView(ScrollView(activity).apply { addView(body) }, LinearLayout.LayoutParams(-1, 0, 1f))
+        root.addView(ScrollView(activity).apply { id = R.id.info_scroll; addView(body) }, LinearLayout.LayoutParams(-1, 0, 1f))
         return body
     }
     fun section(parent: LinearLayout, title: String) {
-        parent.addView(text(title, 12f, muted, true).apply { setPadding(dp(4), dp(20), 0, dp(12)) })
+        parent.addView(text(title, 12f, muted, true).apply { setPadding(dp(4), dp(20), 0, dp(12)); ViewCompat.setAccessibilityHeading(this, true) })
     }
     fun card(title: String, detail: String, icon: Int? = null): View = vertical().apply {
         background = rounded(surface); setPadding(dp(18), dp(18), dp(18), dp(18))
@@ -71,7 +71,7 @@ internal class InfoUi(private val activity: AppCompatActivity) {
             setPadding(dp(8), dp(8), dp(8), dp(8)); background = rounded(accentBg, 12)
             importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
         }, LinearLayout.LayoutParams(dp(38), dp(38)).apply { marginEnd = dp(12) })
-        heading.addView(text(title, 17f, ink, true), LinearLayout.LayoutParams(0, -2, 1f))
+        heading.addView(text(title, 17f, ink, true).apply { ViewCompat.setAccessibilityHeading(this, true) }, LinearLayout.LayoutParams(0, -2, 1f))
         addView(heading)
         if (detail.isNotBlank()) {
             addView(space(12))
@@ -84,6 +84,7 @@ internal class InfoUi(private val activity: AppCompatActivity) {
         background = RippleDrawable(ColorStateList.valueOf(0x248BE5C2), rounded(surface), rounded(Color.WHITE))
         layoutParams = LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(8) }
         contentDescription = "$title. $detail"; isFocusable = true; setOnClickListener { action() }
+        buttonSemantics()
         addView(ImageView(activity).apply {
             setImageResource(icon); imageTintList = ColorStateList.valueOf(accent)
             setPadding(dp(9), dp(9), dp(9), dp(9)); background = rounded(accentBg, 14)

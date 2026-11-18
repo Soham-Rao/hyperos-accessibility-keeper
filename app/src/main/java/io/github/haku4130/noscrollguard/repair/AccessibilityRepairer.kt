@@ -9,6 +9,7 @@ const val REBIND_PAUSE_MS = 2000L
 sealed class RepairResult {
     object Success : RepairResult()
     object NoPermission : RepairResult()
+    object Cancelled : RepairResult()
     data class Failed(val reason: String) : RepairResult()
 }
 

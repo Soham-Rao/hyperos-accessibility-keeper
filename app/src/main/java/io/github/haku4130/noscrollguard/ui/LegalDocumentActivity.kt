@@ -89,6 +89,12 @@ class LegalDocumentActivity : AppCompatActivity() {
         }
         text.append(raw.substring(cursor))
         Linkify.addLinks(text, Linkify.WEB_URLS)
+        text.getSpans(0, text.length, URLSpan::class.java).forEach { span ->
+            val start = text.getSpanStart(span)
+            val end = text.getSpanEnd(span)
+            if (links.none { (from, to, _) -> from < end && to > start }) links += Triple(start, end, span.url)
+            text.removeSpan(span)
+        }
         links.forEach { (start, end, destination) ->
             text.getSpans(start, end, URLSpan::class.java).forEach(text::removeSpan)
             text.setSpan(object : ClickableSpan() {

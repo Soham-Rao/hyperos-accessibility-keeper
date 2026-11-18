@@ -18,24 +18,30 @@ class TargetRepairer(
     private val settings: SecureSettings,
     private val sleeper: (Long) -> Unit = { Thread.sleep(it) }
 ) {
-    fun repair(component: String): RepairResult {
+    fun repair(component: String, canStart: () -> Boolean = { true }, canRestore: () -> Boolean = { true }): RepairResult {
         val target = canonicalService(component)
         val before = serviceList(settings.getString(SecureKeys.ENABLED_SERVICES))
         val listed = before.any { canonicalService(it) == target }
+        if (!canStart()) return RepairResult.Cancelled
         if (listed && !settings.putString(SecureKeys.ENABLED_SERVICES,
                 before.filterNot { canonicalService(it) == target }.joinToString(":"))) {
             return RepairResult.NoPermission
         }
         var restored = false
+        var cancelled = false
         try {
             if (listed) sleeper(REBIND_PAUSE_MS)
         } finally {
             // Read again: another app/user may have changed unrelated services during the pause.
-            val latest = serviceList(settings.getString(SecureKeys.ENABLED_SERVICES))
-            val merged = (latest + component).distinctBy(::canonicalService).joinToString(":")
-            restored = settings.putString(SecureKeys.ENABLED_SERVICES, merged)
-            if (restored) restored = settings.putInt(SecureKeys.ACCESSIBILITY_ENABLED, 1)
+            if (!canRestore() || (!listed && !canStart())) cancelled = true
+            else {
+                val latest = serviceList(settings.getString(SecureKeys.ENABLED_SERVICES))
+                val merged = (latest + component).distinctBy(::canonicalService).joinToString(":")
+                restored = settings.putString(SecureKeys.ENABLED_SERVICES, merged)
+                if (restored) restored = settings.putInt(SecureKeys.ACCESSIBILITY_ENABLED, 1)
+            }
         }
+        if (cancelled) return RepairResult.Cancelled
         if (!restored) return RepairResult.Failed("could not restore service or master setting")
         val verified = settings.getInt(SecureKeys.ACCESSIBILITY_ENABLED, 0) == 1 &&
             serviceList(settings.getString(SecureKeys.ENABLED_SERVICES)).any { canonicalService(it) == target }

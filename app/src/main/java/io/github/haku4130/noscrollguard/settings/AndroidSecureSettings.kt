@@ -12,13 +12,13 @@ class AndroidSecureSettings(private val resolver: ContentResolver) : SecureSetti
         Settings.Secure.getInt(resolver, key, default)
 
     override fun putString(key: String, value: String): Boolean = try {
-        Settings.Secure.putString(resolver, key, value)
+        key == SecureKeys.ENABLED_SERVICES && Settings.Secure.putString(resolver, key, value)
     } catch (e: SecurityException) {
         false
     }
 
     override fun putInt(key: String, value: Int): Boolean = try {
-        Settings.Secure.putInt(resolver, key, value)
+        key == SecureKeys.ACCESSIBILITY_ENABLED && value == 1 && Settings.Secure.putInt(resolver, key, value)
     } catch (e: SecurityException) {
         false
     }

@@ -46,3 +46,5 @@ Maintained by [Soham-Rao](https://github.com/Soham-Rao). Based on [HyperOS Acces
 [Fork changes](CHANGES.md) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [Source provenance](docs/provenance/README.md)
 
 [Privacy](PRIVACY.md) · [Terms](TERMS.md) · [Security](SECURITY.md) · [Permission guide](docs/PERMISSIONS.md)
+
+[Audit findings and remaining release checks](docs/AUDIT.md)

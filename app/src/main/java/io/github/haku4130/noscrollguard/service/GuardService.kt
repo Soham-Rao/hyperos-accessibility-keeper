@@ -65,56 +65,60 @@ class GuardService : Service() {
 
     companion object {
         private val checking = AtomicBoolean(false)
-        private val lastAttempt = mutableMapOf<String, Long>()
-        private val bindingSince = mutableMapOf<String, Long>()
-        fun start(context: Context, manual: Boolean = false) {
-            if (!Consent.accepted(context)) return
-            context.startForegroundService(Intent(context, GuardService::class.java).putExtra("manual", manual))
+        private val tracker = RecoveryTracker { SystemClock.elapsedRealtime() }
+        fun start(context: Context, manual: Boolean = false): Boolean {
+            if (!Consent.accepted(context)) return false
+            return runCatching {
+                context.startForegroundService(Intent(context, GuardService::class.java).putExtra("manual", manual))
+                true
+            }.getOrElse {
+                GuardApp.eventLog(context).append(System.currentTimeMillis(), "[monitor] background service start was blocked; reopen Keeper and check background settings")
+                false
+            }
         }
         fun checkAndRepair(context: Context, source: String, manual: Boolean = false) {
             if (!checking.compareAndSet(false, true)) return
             try {
+                GuardNotifications.refreshOngoing(context)
                 if (!Consent.accepted(context)) return
                 SelectionStore.reconcile(context)
                 if (GuardApp.pauseState(context).isPaused()) return
                 if (context.checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) != PackageManager.PERMISSION_GRANTED) return
                 val catalog = Targets.installed(context)
                 val selected = catalog.filter { Targets.protected(context, it) }
+                tracker.retain(selected.map { it.component }.toSet())
                 if (selected.isEmpty()) return
                 val settings = AndroidSecureSettings(context.contentResolver)
-                val dump = TargetRuntime.read()
+                var dump = TargetRuntime.read()
                 for (target in selected) {
                     if (GuardApp.pauseState(context).isPaused() || !Consent.accepted(context)) break
                     if (!Targets.protected(context, target)) continue
-                    val runtime = TargetRuntime.parse(dump, target.component, Targets.runtimeLabel(catalog, target))
+                    val runtime = TargetRuntime.forCurrentProcess(dump, target.component, Targets.runtimeLabel(catalog, target))
                     val configured = settings.getInt(SecureKeys.ACCESSIBILITY_ENABLED, 0) == 1 &&
                         serviceList(settings.getString(SecureKeys.ENABLED_SERVICES)).any {
                             canonicalService(it) == canonicalService(target.component)
                         }
-                    val now = SystemClock.elapsedRealtime()
-                    val bindingFor = if (runtime?.binding == true) now - bindingSince.getOrPut(target.component) { now }
-                        else { bindingSince.remove(target.component); 0L }
-                    val decision = recoveryDecision(configured, runtime, RecoveryStatus.needsOpen(context, target), bindingFor, manual)
+                    val decision = tracker.decide(target.component, configured, runtime, RecoveryStatus.needsOpen(context, target), manual)
                     if (decision == RecoveryDecision.HEALTHY) {
-                        lastAttempt.remove(target.component)
-                        bindingSince.remove(target.component)
                         RecoveryStatus.setNeedsOpen(context, target, false)
                         continue
                     }
                     if (decision != RecoveryDecision.REPAIR) continue
-                    // Avoid rapid cycles if a target repeatedly crashes or cannot bind.
-                    if (!manual && lastAttempt[target.component]?.let { now - it < 60_000 } == true) continue
-                    lastAttempt[target.component] = now
+                    val installation = SelectionStore.installation(context, target) ?: continue
                     val log = GuardApp.eventLog(context)
                     log.append(System.currentTimeMillis(), "[$source] ${target.name}: recovery started (configured=$configured, runtime=$runtime)", target.component)
-                    val result = TargetRepairer(settings).repair(target.component)
+                    val result = TargetRepairer(settings).repair(target.component,
+                        canStart = { Consent.accepted(context) && !GuardApp.pauseState(context).isPaused() && Targets.protected(context, target) },
+                        canRestore = { SelectionStore.installation(context, target) == installation })
                     var message = when (result) {
                         RepairResult.Success -> {
-                            var state = TargetRuntime.parse(TargetRuntime.read(), target.component, Targets.runtimeLabel(catalog, target))
+                            dump = TargetRuntime.read()
+                            var state = TargetRuntime.forCurrentProcess(dump, target.component, Targets.runtimeLabel(catalog, target))
                             repeat(4) {
                                 if (state?.bound != true || state?.crashed == true) {
                                     Thread.sleep(1000)
-                                    state = TargetRuntime.parse(TargetRuntime.read(), target.component, Targets.runtimeLabel(catalog, target))
+                                    dump = TargetRuntime.read()
+                                    state = TargetRuntime.forCurrentProcess(dump, target.component, Targets.runtimeLabel(catalog, target))
                                 }
                             }
                             RecoveryStatus.setNeedsOpen(context, target, state != null && (state?.bound != true || state?.crashed == true))
@@ -125,11 +129,15 @@ class GuardService : Service() {
                             }
                         }
                         RepairResult.NoPermission -> "permission missing — reconnect for setup"
+                        RepairResult.Cancelled -> "recovery cancelled — protection control or app installation changed"
                         is RepairResult.Failed -> "recovery failed: ${result.reason}"
                     }
+                    // A repair can change the state of other services. Never reuse
+                    // the pre-repair snapshot for later targets in this pass.
+                    if (result !is RepairResult.Success) dump = TargetRuntime.read()
                     message = "${target.name}: $message"
                     log.append(System.currentTimeMillis(), "[$source] $message", target.component)
-                    GuardNotifications.notifyRepair(context, message, if (result is RepairResult.Success && RecoveryStatus.needsOpen(context, target)) target.packageName else null)
+                    if (result != RepairResult.Cancelled) GuardNotifications.notifyRepair(context, message, if (result is RepairResult.Success && RecoveryStatus.needsOpen(context, target)) target.packageName else null)
                 }
             } catch (e: Exception) {
                 GuardApp.eventLog(context).append(System.currentTimeMillis(), "[$source] check failed: ${e.javaClass.simpleName}")
@@ -137,3 +145,4 @@ class GuardService : Service() {
         }
     }
 }
+

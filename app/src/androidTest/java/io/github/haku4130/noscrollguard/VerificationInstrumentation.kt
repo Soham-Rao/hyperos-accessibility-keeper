@@ -30,6 +30,28 @@ class VerificationInstrumentation : Instrumentation() {
             fun repair() = GuardService.checkAndRepair(context, "device verification", true)
             val case = arguments.getString("case") ?: "controls"
             when (case) {
+                "approve-fixture-install" -> {
+                    // Host has just requested installation of our built fixture.
+                    // Never accept arbitrary installers or persist a device choice.
+                    val automation = getUiAutomation(android.app.UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
+                    var approved = false
+                    repeat(40) {
+                        if (!approved) {
+                            val root = automation.rootInActiveWindow
+                            if (root != null && root.packageName?.toString() in setOf("com.miui.securitycenter", "com.android.packageinstaller")) {
+                                val labels = root.findAccessibilityNodeInfosByText("Keeper test fixture with a deliberately long service name for accessibility layout testing")
+                                val title = root.findAccessibilityNodeInfosByText("Install via USB")
+                                if (labels.isNotEmpty() && title.isNotEmpty()) {
+                                    val install = root.findAccessibilityNodeInfosByText("Install").firstOrNull { it.text?.toString() == "Install" && it.isEnabled }
+                                    approved = install?.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK) == true
+                                }
+                            }
+                            if (!approved) Thread.sleep(100)
+                        }
+                    }
+                    check(approved) { "Known fixture installation prompt was not available" }
+                }
+                "ui-audit" -> UiAudit(this).run()
                 "controls" -> {
                     check(!SelectionStore.retain(context)) { "Retention must default off" }
                     context.getSharedPreferences("consent", 0).edit().clear().commit()
@@ -58,6 +80,14 @@ class VerificationInstrumentation : Instrumentation() {
                 "select-on-retention" -> { SelectionStore.setRetain(context, true); Targets.setProtected(context, fixture, true); check(SelectionStore.retain(context)); check(Targets.protected(context, fixture)) }
                 "expect-cleared" -> { check(!Targets.protected(context, fixture)) { "Reinstalled app retained choice with setting off" } }
                 "expect-retained" -> { check(Targets.protected(context, fixture)) { "Same-signer reinstall lost opted-in choice" }; repair(); check(configured()) }
+                "expect-new-component-off" -> {
+                    val installed = Targets.installed(context).single { it.packageName == fixture.packageName }
+                    check(installed.component != fixture.component)
+                    check(!Targets.protected(context, installed)) { "A renamed service inherited the old service choice" }
+                    val before = Settings.Secure.getString(context.contentResolver, "enabled_accessibility_services")
+                    repair()
+                    check(Settings.Secure.getString(context.contentResolver, "enabled_accessibility_services") == before) { "Missing selected component caused a settings write" }
+                }
                 else -> error("Unknown case")
             }
             // Instrumentation.finish terminates without a normal Activity stop, which

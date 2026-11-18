@@ -55,5 +55,6 @@ object Targets {
     // Some HyperOS builds expose only labels in the bound-service dump. A duplicate
     // label cannot identify a specific service, so do not use it as proof of binding.
     fun runtimeLabel(catalog: List<GuardTarget>, target: GuardTarget): String? =
-        target.name.takeIf { name -> catalog.count { it.name == name } == 1 }
+        target.name.takeIf { name -> catalog.count { it.name == name } == 1 &&
+            catalog.none { Regex("[\\[\\]{},\\r\\n]").containsMatchIn(it.name) } }
 }

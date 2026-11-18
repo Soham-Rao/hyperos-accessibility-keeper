@@ -11,6 +11,7 @@ import java.security.MessageDigest
 object SelectionStore {
     private fun prefs(context: Context) = context.getSharedPreferences("selection_identity", Context.MODE_PRIVATE)
     fun retain(context: Context) = prefs(context).getBoolean("retain_reinstall", false)
+    fun installation(context: Context, target: GuardTarget): InstallIdentity? = identity(context, target.packageName)
     @Synchronized fun setRetain(context: Context, enabled: Boolean) {
         prefs(context).edit().putBoolean("retain_reinstall", enabled).apply()
         reconcile(context)

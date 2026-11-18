@@ -6,6 +6,10 @@ Starting upstream revision: [`959ce7cd924c35847426d0f8e730bf90bf25ba1b`](https:/
 
 ## Material changes in this fork
 
+- Harden recovery against stale diagnostic snapshots, flapping states, misleading labels and installation changes during rebinds. Scope parsed state to Keeper's Android user/profile.
+- Bound and atomically replace the local journal, preview the full export before sharing, and expose clearer accessibility roles, pause states and keyboard-aware layouts.
+- Verify reviewed runtime-artifact checksums during builds; retain a dated maintainer audit and isolated device-test fixture.
+
 - Require a versioned safety acknowledgment before recovery starts, with offline permission, privacy, terms and security documents.
 - Default target-app reinstall retention to off. When opted in, preserve only existing service choices with the same signing identity; detect missed removals using installation identity.
 

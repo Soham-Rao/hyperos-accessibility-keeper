@@ -89,6 +89,8 @@ If branch protection later requires this workflow, review GitHub's path-filter/r
 
 ## Device testing and diagnostics
 
+CI compiles the optional device-test APK in the same Gradle invocation, but does not run an emulator or device suite. Run the [isolated device checks](../device-tests/README.md) locally; compilation alone does not establish a UI/device pass.
+
 Follow [Testing](TESTING.md). Unit tests do not establish device compatibility, battery behavior or actual function of a third-party app. Do not intentionally disrupt someone's selected services without a controlled, reversible device test.
 
 Keep raw captures, device identifiers, machine settings and signing files out of commits. `misc/` is private working space and ignored entirely.
@@ -106,4 +108,4 @@ When changing runtime dependencies:
 3. Update the component inventory, artifact hashes, `THIRD_PARTY_NOTICES.md` and `legal/THIRD_PARTY_NOTICES.txt`. Include any newly required full license or notice text under `legal/`; add an offline reader action if a different license is introduced.
 4. Rebuild, inspect the packaged assets and check the offline documents in the app. Keep upstream copyright/permission notices.
 
-Inventory artifact hashes record the reviewed inputs; the current component-list build check is not a complete dependency-integrity lock. Refresh the notice review when dependencies or assets change. See [third-party notices](../THIRD_PARTY_NOTICES.md) and [provenance](provenance/README.md).
+The build checks both runtime component lists and the SHA-256 of their resolved artifacts against the reviewed inventory. A negative check with an altered checksum confirmed that the build rejects it. This covers the APK's listed runtime artifacts, not every Gradle plugin, POM or build-tool input; complete build-chain verification remains a release-preparation task. Refresh the notice review when dependencies or assets change. See [third-party notices](../THIRD_PARTY_NOTICES.md) and [provenance](provenance/README.md).

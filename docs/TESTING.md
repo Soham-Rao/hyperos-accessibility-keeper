@@ -9,20 +9,23 @@ As of 2026-11-18:
 | Environment | Evidence | Limits |
 | --- | --- | --- |
 | POCO F6 · HyperOS 3 / OS3.0.303.0.WNPINXM · Android 16 | Installed-service discovery; selected-service recovery; preservation of unrelated entries; app-opening actions; menus/settings and theme checks | One maintainer device, limited selected-service sample |
-| Local unit suite | 67 passing tests, including update/reinstall identity decisions | Does not simulate real firmware or third-party app behavior |
+| Local unit suite | 86 passing tests, including connection settling, cooldown flapping, diagnostic parsing, profile separation, concurrent installation/control changes and bounded journal exports | Does not simulate real firmware or third-party app behavior |
 | POCO F6 · disposable verification build and dummy service | Consent blocks repair; protection off leaves Android setting unchanged; deliberate disable stays off; pause/resume; controlled short pause expiry; revoked write grant blocks repair; revoked diagnostic grant yields unknown status; reinstall default-off clears selection; opted-in same-signer reinstall retains selection even after force-stop; uninstalling Keeper leaves enabled-service list unchanged | One device; dummy target; short expiry test does not represent a 30-minute or multi-day endurance run |
+| POCO F6 · extended fixture and UI audit | Updates preserve choices; changed signer and renamed service do not inherit protection; private activity/service access denied; search, tile/switch behavior, roles, keyboard, return scroll, policy/license links, reviewed-log export, light theme and process-local 2× text checks pass; captures inspected | No human TalkBack/Switch Access session; browser/share intents intercepted; no log sent |
 | Reboot / multi-day / other models | Not yet established by a recorded test matrix | Do not infer these from boot receiver code or one successful recovery |
 
 The [Android CI page](https://github.com/Soham-Rao/hyperos-accessibility-keeper/actions/workflows/build.yml) is the source of current remote check results; a local pass is not a claim that every CI run passed.
 
 ## Known limitations
 
+See the [maintainer audit](AUDIT.md) for fixed findings, recorded device checks and remaining limits.
+
 - Some apps need opening after recovery before their service becomes usable. Open app actions are provided for this case.
 - Android's bound state confirms the system connection, not the correctness of the third-party app's own features.
 - Runtime diagnostics may be unavailable or differ by firmware; the UI distinguishes unverified status.
 - HyperOS resource/category rules were checked against the maintainer's phone. Other firmware and private OEM filtering policies can differ.
 - Force-stopping Keeper prevents recovery until you open it again. Autostart and unrestricted battery settings are helpful but not universal guarantees.
-- Reinstall behavior has limited single-device fixture coverage. Signing-identity changes are covered in unit tests, not a physical replacement-signer test. Profiles/dual apps and long-term battery use remain unverified.
+- Reinstall, changed-signer and renamed-component behavior have single-device fixture coverage. Profiles/dual apps and long-term battery use remain physically unverified.
 
 ## Reproduce the isolated device checks
 

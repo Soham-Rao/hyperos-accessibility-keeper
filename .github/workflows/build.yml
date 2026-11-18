@@ -88,7 +88,7 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Test, lint and build once
-        run: ./gradlew --no-daemon --build-cache --console=plain :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
+        run: ./gradlew --no-daemon --build-cache --console=plain :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleDebugAndroidTest
 
       - name: Keep failure reports briefly
         if: failure()

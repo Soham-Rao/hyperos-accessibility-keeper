@@ -10,13 +10,13 @@ Keeper queries installed accessibility services, including their labels, icons, 
 
 Keeper saves your selected service identifiers, installation timestamps and signing-certificate fingerprints for selected apps, appearance choice, pause time, policy acknowledgment, notification-prompt status, recovery state and reinstall preference in private app storage. These identify apps, not your signing keys. Certificate fingerprints are public certificate digests.
 
-A local journal retains up to 500 entries containing timestamps, app names, service identifiers, status and recovery actions. It may reveal which apps you use and when. Keeper does not request an accessibility service of its own to read screen content, and does not collect typed text or passwords through such a service.
+A local journal retains up to 500 entries, also bounded by a 200,000-character total. Individual messages are capped at 2,048 characters. Entries contain timestamps, app names, service identifiers, status and recovery actions. It may reveal which apps you use and when. Keeper does not request an accessibility service of its own to read screen content, and does not collect typed text or passwords through such a service.
 
 ## Sharing and network access
 
 The packaged application has no INTERNET permission. Keeper includes no first-party telemetry, advertising or automatic log upload. AndroidX libraries provide scheduling and interface functionality; the merged manifest includes network-state and wake-lock permissions for background scheduling. Network state does not grant internet access.
 
-Sharing the journal is an explicit action that opens Android's share chooser. The receiving app handles the shared text under its own policy. Review it before sending. Repository and help links open an external browser, whose network requests and policies are separate. Reports or screenshots you post on GitHub may be public. Do not include secrets, full diagnostic dumps or personal notifications.
+Sharing opens a preview of the complete export before you explicitly open Android's share chooser. The receiving app handles the shared text under its own policy. Review it before sending. Repository and help links open an external browser, whose network requests and policies are separate. Reports or screenshots you post on GitHub may be public. Do not include secrets, full diagnostic dumps or personal notifications.
 
 ## Retention and deletion
 

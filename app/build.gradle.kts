@@ -1,3 +1,5 @@
+import java.security.MessageDigest
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -94,12 +96,25 @@ val verifyLicenseInventory by tasks.registering {
     doLast {
         val document = groovy.json.JsonSlurper().parse(inventory) as Map<*, *>
         val components = document["components"] as List<*>
-        val expected = components.map { (it as Map<*, *>)["coordinate"].toString() }.toSet()
-        val actual = configurations.getByName("releaseRuntimeClasspath")
-            .resolvedConfiguration.resolvedArtifacts.map { it.moduleVersion.id.toString() }.toSet()
-        check(actual == expected) {
-            "Runtime dependencies changed. Review licenses and update legal/runtime-dependencies.json and notices. " +
-                "Added: ${actual - expected}; removed: ${expected - actual}"
+        val reviewed = components.associate { val item = it as Map<*, *>; item["coordinate"].toString() to item["artifact_sha256"].toString() }
+        listOf("debugRuntimeClasspath", "releaseRuntimeClasspath").forEach { configuration ->
+            val artifacts = configurations.getByName(configuration).resolvedConfiguration.resolvedArtifacts
+            val actual = artifacts.map { it.moduleVersion.id.toString() }.toSet()
+            check(actual == reviewed.keys) {
+                "Runtime dependencies changed. Review licenses and update legal/runtime-dependencies.json and notices. " +
+                    "Added: ${actual - reviewed.keys}; removed: ${reviewed.keys - actual}"
+            }
+            artifacts.forEach { artifact ->
+                val digest = MessageDigest.getInstance("SHA-256")
+                artifact.file.inputStream().use { input ->
+                    val buffer = ByteArray(8192)
+                    var count = input.read(buffer)
+                    while (count != -1) { digest.update(buffer, 0, count); count = input.read(buffer) }
+                }
+                val hash = digest.digest().joinToString("") { "%02x".format(it) }
+                val coordinate = artifact.moduleVersion.id.toString()
+                check(hash == reviewed[coordinate]) { "Runtime artifact checksum differs from the reviewed inventory: $coordinate. Review the artifact before updating its checksum." }
+            }
         }
     }
 }

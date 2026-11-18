@@ -69,6 +69,9 @@ class MainActivity : AppCompatActivity() {
     private var generation = 0
     private var consentPromptShown = false
     private var updatingSwitches = false
+    private var settingsScrollY = 0
+    private var settingsScroll: ScrollView? = null
+    private var wasPaused = false
     private val refresh = object : Runnable {
         override fun run() { render(); handler.postDelayed(this, 4000) }
     }
@@ -90,6 +93,7 @@ class MainActivity : AppCompatActivity() {
         gravity = Gravity.CENTER; minHeight = dp(48); setPadding(dp(14), 0, dp(14), 0)
         background = touchSurface(accentBg, 24); isClickable = true; isFocusable = true
         setOnClickListener { onClick() }
+        buttonSemantics()
     }
     private fun iconButton(icon: Int, description: String, click: () -> Unit) = ImageButton(this).apply {
         setImageResource(icon); imageTintList = ColorStateList.valueOf(ink)
@@ -102,7 +106,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(root)
         ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
-            view.setPadding(bars.left + dp(20), bars.top + dp(16), bars.right + dp(20), bars.bottom + dp(12))
+            val keyboard = insets.getInsets(WindowInsetsCompat.Type.ime())
+            view.setPadding(bars.left + dp(20), bars.top + dp(16), bars.right + dp(20), maxOf(bars.bottom, keyboard.bottom) + dp(12))
             insets
         }
         ViewCompat.requestApplyInsets(root)
@@ -117,6 +122,7 @@ class MainActivity : AppCompatActivity() {
         }
         query = savedInstanceState?.getString("query").orEmpty()
         protectedOnly = savedInstanceState?.getBoolean("protectedOnly") ?: false
+        settingsScrollY = savedInstanceState?.getInt("settingsScrollY") ?: 0
         if (savedInstanceState?.getBoolean("settings") == true) showSettings()
         else if (savedInstanceState?.getBoolean("activity") == true) showActivity() else showApps()
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -130,6 +136,7 @@ class MainActivity : AppCompatActivity() {
         outState.putString("query", query); outState.putBoolean("protectedOnly", protectedOnly)
         outState.putBoolean("activity", showingActivity); super.onSaveInstanceState(outState)
         outState.putBoolean("settings", settingsPage)
+        outState.putInt("settingsScrollY", settingsScroll?.scrollY ?: settingsScrollY)
     }
     override fun onResume() {
         super.onResume()
@@ -146,16 +153,17 @@ class MainActivity : AppCompatActivity() {
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 0)
             }
         }
-        if (settingsPage) showSettings()
+        if (settingsPage && wasPaused) showSettings()
+        wasPaused = false
         handler.post(refresh)
     }
-    override fun onPause() { handler.removeCallbacks(refresh); super.onPause() }
+    override fun onPause() { wasPaused = true; handler.removeCallbacks(refresh); super.onPause() }
     override fun onDestroy() { executor.shutdownNow(); super.onDestroy() }
 
     private fun showApps() {
         showingActivity = false; settingsPage = false; rows.clear(); buildRoot()
         val toolbar = horizontal()
-        toolbar.addView(label("Accessibility Keeper", 23f, ink, true), LinearLayout.LayoutParams(0, -2, 1f))
+        toolbar.addView(label("Accessibility Keeper", 23f, ink, true).apply { ViewCompat.setAccessibilityHeading(this, true) }, LinearLayout.LayoutParams(0, -2, 1f))
         moreButton = iconButton(R.drawable.ic_more, "More options") { showOptions() }
         toolbar.addView(moreButton)
         root.addView(toolbar); root.addView(space(20))
@@ -181,6 +189,12 @@ class MainActivity : AppCompatActivity() {
             imeOptions = android.view.inputmethod.EditorInfo.IME_ACTION_DONE
             setText(query); contentDescription = "Search accessibility apps"
             doAfterTextChanged { query = it?.toString().orEmpty(); filterRows() }
+            setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                    WindowCompat.getInsetsController(window, window.decorView).hide(WindowInsetsCompat.Type.ime())
+                    clearFocus(); true
+                } else false
+            }
         }
         searchBox.addView(search, LinearLayout.LayoutParams(0, -2, 1f)); root.addView(searchBox)
         root.addView(space(14))
@@ -245,6 +259,7 @@ class MainActivity : AppCompatActivity() {
             }
             row.addView(toggle)
             row.setOnClickListener { showAppOptions(target) }
+            row.buttonSemantics()
             row.contentDescription = "Options for ${target.name}"
             row.setOnLongClickListener { showAppOptions(target); true }
             rows[target.component] = Row(row, state, toggle); list.addView(row)
@@ -261,7 +276,10 @@ class MainActivity : AppCompatActivity() {
         summary.text = when {
             !accepted -> "Recovery is off until you acknowledge"
             !ready -> "Connect to a computer to finish setup"
-            paused -> "Resumes automatically after 30 minutes"
+            paused -> {
+                val minutes = ((GuardApp.pauseState(this).remainingMs() + 59_999) / 60_000).coerceAtLeast(1)
+                "Resumes in $minutes ${if (minutes == 1L) "minute" else "minutes"}"
+            }
             selected == 1 -> "1 app protected"
             else -> "$selected apps protected"
         }
@@ -278,10 +296,13 @@ class MainActivity : AppCompatActivity() {
             if (show) visible++
         }
         count.text = visible.toString()
+        count.contentDescription = "$visible accessibility services shown"
         allChip.background = rounded(if (!protectedOnly) accentBg else surface, 24)
         allChip.setTextColor(if (!protectedOnly) accent else muted)
+        allChip.isSelected = !protectedOnly
         protectedChip.background = rounded(if (protectedOnly) accentBg else surface, 24)
         protectedChip.setTextColor(if (protectedOnly) accent else muted)
+        protectedChip.isSelected = protectedOnly
         empty.visibility = if (visible == 0) View.VISIBLE else View.GONE
         empty.text = when {
             query.isNotBlank() -> "No apps match your search"
@@ -310,11 +331,18 @@ class MainActivity : AppCompatActivity() {
             menu.addView(optionRow(icon, name, detail, false) { popup.dismiss(); click() })
         }
         item(R.drawable.ic_check, "Check now", "Recover protected apps") {
-            GuardService.start(this, manual = true); Toast.makeText(this, "Checking protected apps", Toast.LENGTH_SHORT).show()
+            when {
+                !Consent.accepted(this) -> startActivity(Intent(this, ConsentActivity::class.java))
+                checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) != PackageManager.PERMISSION_GRANTED -> showSetup()
+                GuardApp.pauseState(this).isPaused() -> sheet("Protection is paused", "Resume protection before checking your apps.", listOf("Resume and check" to {
+                    GuardApp.pauseState(this).resume(); GuardService.start(this, manual = true); updateSummary()
+                }))
+                else -> { GuardService.start(this, manual = true); Toast.makeText(this, "Checking protected apps", Toast.LENGTH_SHORT).show() }
+            }
         }
         item(R.drawable.ic_settings, "Settings", "Setup, appearance and help") { showSettings() }
         item(R.drawable.ic_accessibility, "Accessibility settings", "Open your phone's controls") {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            openSettings(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
         popup.showAsDropDown(moreButton, 0, dp(8), Gravity.END)
     }
@@ -323,6 +351,7 @@ class MainActivity : AppCompatActivity() {
             minimumHeight = dp(76); setPadding(dp(14), dp(14), dp(14), dp(14))
             background = touchSurface(surface, 18); isClickable = true; isFocusable = true
             setOnClickListener { click() }
+            buttonSemantics()
             contentDescription = "$name. $detail"
         }
         row.addView(ImageView(this).apply {
@@ -345,7 +374,7 @@ class MainActivity : AppCompatActivity() {
         content.addView(View(this).apply { background = rounded(muted, 3) }, LinearLayout.LayoutParams(dp(36), dp(4)).apply {
             gravity = Gravity.CENTER_HORIZONTAL; bottomMargin = dp(22)
         })
-        content.addView(label(name, 23f, ink, true)); content.addView(space(14))
+        content.addView(label(name, 23f, ink, true).apply { ViewCompat.setAccessibilityHeading(this, true) }); content.addView(space(14))
         content.addView(label(description, 15f, muted).apply { setLineSpacing(dp(3).toFloat(), 1f) })
         content.addView(space(22))
         actions.forEach { (text, click) ->
@@ -362,14 +391,15 @@ class MainActivity : AppCompatActivity() {
     }
     private fun howItWorks() = sheet("You're in control", "Turn a switch on to keep that app's accessibility enabled. If it stops, Keeper tries to bring it back.\n\nTurn the switch off to stop automatic recovery. The app's current accessibility setting stays unchanged.\n\nPause stops recovery for all apps for 30 minutes. Long-press an app for more options.")
     private fun showSettings() {
+        settingsScrollY = settingsScroll?.scrollY ?: settingsScrollY
         showingActivity = true; settingsPage = true; buildRoot()
         val toolbar = horizontal()
         toolbar.addView(iconButton(R.drawable.ic_back, "Back to apps") { showApps() })
-        toolbar.addView(label("Settings", 25f, ink, true).apply { setPadding(dp(14), 0, 0, 0) })
+        toolbar.addView(label("Settings", 25f, ink, true).apply { setPadding(dp(14), 0, 0, 0); ViewCompat.setAccessibilityHeading(this, true) })
         root.addView(toolbar); root.addView(space(20))
         val body = vertical()
         fun section(name: String) {
-            body.addView(label(name, 12f, muted, true).apply { setPadding(dp(4), dp(20), 0, dp(12)) })
+            body.addView(label(name, 12f, muted, true).apply { setPadding(dp(4), dp(20), 0, dp(12)); ViewCompat.setAccessibilityHeading(this, true) })
         }
         fun item(icon: Int, name: String, detail: String, click: () -> Unit) {
             body.addView(optionRow(icon, name, detail, true, click), LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(8) })
@@ -379,7 +409,7 @@ class MainActivity : AppCompatActivity() {
         item(R.drawable.ic_check, "Recovery setup", if (ready) "Ready to protect your apps" else "One-time setup needed") { showSetup() }
         item(R.drawable.ic_power, "Background autostart", "Let Keeper start after a reboot") {
             sheet("Keep protection available", "Allow Background autostart for Accessibility Keeper in your phone's settings.\n\nAlso keep its battery setting unrestricted. If you force-stop Keeper, open it again to resume protection.", listOf("Open app settings" to {
-                startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
+                openSettings(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
             }))
         }
         section("PREFERENCES")
@@ -400,21 +430,25 @@ class MainActivity : AppCompatActivity() {
         }) { chooseAppearance() }
         val notifications = getSystemService(android.app.NotificationManager::class.java).areNotificationsEnabled()
         item(R.drawable.ic_bell, "Notifications", if (notifications) "Recovery updates are on" else "Recovery updates are off") {
-            startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName))
+            openSettings(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName))
         }
         section("TOOLS & HELP")
         item(R.drawable.ic_info, "Privacy, safety & terms", "Permission guide, policies and your acknowledgment") {
             startActivity(Intent(this, ConsentActivity::class.java))
         }
         item(R.drawable.ic_accessibility, "Accessibility settings", "Manage your phone's accessibility services") {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            openSettings(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
         item(R.drawable.ic_help, "How protection works", "A quick guide to switches and recovery") { howItWorks() }
         item(R.drawable.ic_info, "About Keeper", "Credits, source and offline licenses") {
             startActivity(Intent(this, AboutActivity::class.java))
         }
         body.addView(space(12))
-        root.addView(ScrollView(this).apply { addView(body) }, LinearLayout.LayoutParams(-1, 0, 1f))
+        settingsScroll = ScrollView(this).apply {
+            id = R.id.settings_scroll; addView(body)
+            post { scrollTo(0, settingsScrollY) }
+        }
+        root.addView(settingsScroll, LinearLayout.LayoutParams(-1, 0, 1f))
     }
     private fun chooseAppearance() {
         val choices = listOf("Follow phone settings" to AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
@@ -436,14 +470,19 @@ class MainActivity : AppCompatActivity() {
     }
     private fun showAppOptions(target: GuardTarget) {
         val detail = when {
-            RecoveryStatus.needsOpen(this, target) -> "Accessibility is enabled, but this app hasn't finished connecting. Open the app to help it finish starting."
+            RecoveryStatus.needsOpen(this, target) -> "Keeper restored the accessibility settings but could not confirm that this app finished connecting. Open it if you need help starting it."
             Targets.protected(this, target) -> "Protection is on. Open the app to use it or check its settings."
             else -> "Protection is off. Use the switch in the app list to turn it on."
         }
         sheet(target.name, detail, listOf(
             "Open app" to { openTarget(target) },
-            "Accessibility settings" to { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
+            "Accessibility settings" to { openSettings(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
         ))
+    }
+    private fun openSettings(intent: Intent) {
+        runCatching { startActivity(intent) }.onFailure {
+            Toast.makeText(this, "That settings page is not available on this phone", Toast.LENGTH_LONG).show()
+        }
     }
     private fun openTarget(target: GuardTarget) {
         val launch = packageManager.getLaunchIntentForPackage(target.packageName)
@@ -456,11 +495,9 @@ class MainActivity : AppCompatActivity() {
         showingActivity = true; settingsPage = false; buildRoot()
         val toolbar = horizontal()
         toolbar.addView(iconButton(R.drawable.ic_back, "Back to apps") { showApps() })
-        toolbar.addView(label("Recent activity", 23f, ink, true).apply { setPadding(dp(12), 0, 0, 0) }, LinearLayout.LayoutParams(0, -2, 1f))
+        toolbar.addView(label("Recent activity", 23f, ink, true).apply { setPadding(dp(12), 0, 0, 0); ViewCompat.setAccessibilityHeading(this, true) }, LinearLayout.LayoutParams(0, -2, 1f))
         toolbar.addView(iconButton(R.drawable.ic_share, "Share activity log") {
-            startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"; putExtra(Intent.EXTRA_TEXT, GuardApp.eventLog(this@MainActivity).asText())
-            }, "Share activity log"))
+            startActivity(Intent(this, LogPreviewActivity::class.java))
         })
         root.addView(toolbar); root.addView(space(20))
         val entries = GuardApp.eventLog(this).read().filterNot { it.message.contains("recovery started (") }.takeLast(60).asReversed()
@@ -480,10 +517,11 @@ class MainActivity : AppCompatActivity() {
                 val target = entry.component?.let { component -> knownApps.firstOrNull { canonicalService(it.component) == canonicalService(component) } }
                     ?: knownApps.filter { message.startsWith("${it.name}:") }.singleOrNull()
                 if (target != null) {
-                    item.addView(space(12)); item.addView(label("Open app  ↗", 14f, accent, true))
+                    item.addView(space(12)); item.addView(label("Open ${target.name}  ↗", 14f, accent, true))
                     item.background = touchSurface(surface, 18)
-                    item.contentDescription = "${target.name}. Open app to finish connecting"
+                    item.contentDescription = "${target.name}. Open the currently installed app"
                     item.setOnClickListener { openTarget(target) }
+                    item.buttonSemantics()
                 }
             }
             body.addView(item)
@@ -502,13 +540,15 @@ class MainActivity : AppCompatActivity() {
                 val master = settings.getInt(SecureKeys.ACCESSIBILITY_ENABLED, 0) == 1
                 val dump = if (discovered.any { Targets.protected(this, it) }) TargetRuntime.read() else null
                 val states = discovered.associate { target ->
-                    val runtime = TargetRuntime.parse(dump, target.component, Targets.runtimeLabel(discovered, target))
+                    val runtime = TargetRuntime.forCurrentProcess(dump, target.component, Targets.runtimeLabel(discovered, target))
                     val status = when {
                         !Consent.accepted(this) -> "Recovery off · review safety"
+                        GuardApp.pauseState(this).isPaused() -> "Recovery paused · ${if (runtime?.bound == true && !runtime.crashed) "running" else "not checked"}"
+                        checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) != PackageManager.PERMISSION_GRANTED -> "Recovery unavailable · setup needed"
                         !master || canonicalService(target.component) !in listed -> "Waiting for accessibility"
                         runtime?.bound == true && !runtime.crashed -> "Protected · running"
-                        RecoveryStatus.needsOpen(this, target) -> "Open app to finish connecting"
                         runtime == null -> "Enabled · runtime unverified"
+                        RecoveryStatus.needsOpen(this, target) -> "Open app to finish connecting"
                         runtime.crashed -> "Recovery needed"
                         else -> "Connecting…"
                     }
@@ -524,6 +564,7 @@ class MainActivity : AppCompatActivity() {
                                 row.toggle.isChecked = selected
                                 updatingSwitches = false
                                 row.status.text = if (selected) states[target.component] else "Not protected"
+                                row.view.contentDescription = "${target.name}. ${row.status.text}. Open app options"
                                 row.status.setTextColor(if (!selected) muted else if (states[target.component]?.startsWith("Protected") == true) accent else warning)
                             }
                         }
@@ -543,3 +584,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
+

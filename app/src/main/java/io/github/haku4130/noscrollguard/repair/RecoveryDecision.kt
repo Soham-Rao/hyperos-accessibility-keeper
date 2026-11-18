@@ -9,8 +9,8 @@ fun recoveryDecision(configured: Boolean, runtime: RuntimeState?, needsOpen: Boo
     bindingForMs: Long, manual: Boolean = false): RecoveryDecision = when {
     !configured -> RecoveryDecision.REPAIR
     runtime?.bound == true && !runtime.crashed -> RecoveryDecision.HEALTHY
-    needsOpen && !manual -> RecoveryDecision.OPEN_APP
     runtime == null -> RecoveryDecision.UNVERIFIED
-    runtime.binding && !runtime.crashed && bindingForMs < 30_000 && !manual -> RecoveryDecision.WAIT
+    needsOpen && !manual -> RecoveryDecision.OPEN_APP
+    !runtime.crashed && bindingForMs < 30_000 && !manual -> RecoveryDecision.WAIT
     else -> RecoveryDecision.REPAIR
 }
