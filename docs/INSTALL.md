@@ -1,17 +1,17 @@
 # Install and set up Keeper
 
-**Signed public APKs are not published yet.** This guide describes the setup path; until a release exists, developers can [build from source](DEVELOPMENT.md). Download availability and supported versions will be stated on each [release](https://github.com/Soham-Rao/hyperos-accessibility-keeper/releases).
+Download the signed APK from the [public beta release](https://github.com/Soham-Rao/hyperos-accessibility-keeper/releases/tag/v0.2.0-beta.1). For a tap-by-tap walkthrough, see [Beginner installation](../README.md#install-accessibility-keeper).
 
 ## Before you start
 
 - Android 13 or newer is the build minimum. Actual device evidence is currently limited to **POCO F6, HyperOS 3, Android 16**.
 - You need a computer and USB cable for one-time permission setup. No root or Shizuku is used by this version.
 - Read [Safety and permissions](SAFETY.md). Keeper restores accessibility access for the services you select; select only apps you trust.
-- A future signed release may require uninstalling an existing developer build if its signing key differs. That removes Keeper's settings and grants. Follow the release's migration instructions before replacing an installation.
+- The signed beta may require uninstalling an existing developer build if its signing key differs. That removes Keeper's settings and grants. Follow the release's migration instructions before replacing an installation.
 
 ## 1. Get the app and computer tools
 
-When a reviewed release is available, use its APK and published SHA-256 checksum. Do not confuse GitHub's source-code ZIP with an installable APK.
+Use the APK and published SHA-256 checksum from the release page. Do not confuse GitHub's source-code ZIP with an installable APK.
 
 Install Google's [Android Platform Tools](https://developer.android.com/tools/releases/platform-tools) on your computer. Open a terminal in the extracted folder. On Windows PowerShell, use `./adb.exe` wherever the examples say `adb`, unless adb is already on your PATH.
 
