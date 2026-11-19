@@ -50,3 +50,5 @@ Maintained by [Soham-Rao](https://github.com/Soham-Rao). Based on [HyperOS Acces
 [Audit findings and remaining release checks](docs/AUDIT.md)
 
 [Device compatibility](docs/COMPATIBILITY.md) · [Release preparation](docs/RELEASE.md)
+
+[Watch the animated walkthrough](docs/media/beta/keeper-walkthrough.svg) · [Browse the demo stills](docs/media/beta)

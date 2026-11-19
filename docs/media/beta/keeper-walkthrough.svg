@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 900" width="720" height="900"><title>Accessibility Keeper animated demo</title><desc>Fictional services show app selection, options, pause, activity, permissions and credits.</desc><rect width="720" height="900" fill="#10151c"/><rect width="1" height="1" fill="none"><animate id="loop" attributeName="opacity" values="0;0" begin="0s;loop.end" dur="30s"/></rect>
+<g opacity='1'><animate attributeName='opacity' values='0;1;1;0' keyTimes='0;.07;.92;1' begin='loop.begin+0s' dur='5s' fill='freeze'/><animateTransform attributeName='transform' type='translate' values='16 0;0 0' begin='loop.begin+0s' dur='0.35s'/>
+<g font-family="Arial">
+<text x="48" y="64" font-size="19" fill="#87ddbc">ACCESSIBILITY KEEPER / ILLUSTRATED DEMO</text>
+<text x="48" y="128" font-size="44" font-weight="bold" fill="#f1f6fc">Choose your apps</text>
+<rect x="48" y="177" width="624" height="548" rx="32" fill="#171d25" stroke="#384655" stroke-width="2"/>
+<rect x="72" y="202" width="576" height="112" rx="24" fill="#19372f"/>
+<text x="96" y="248" font-size="32" font-weight="bold" fill="#a0eacc">Protection is on</text>
+<text x="96" y="286" font-size="22" fill="#c5e8db" opacity="0">1 service selected<set attributeName="opacity" to="1" begin="loop.begin+1.7s" dur="3.3s"/></text>
+<g transform="translate(0,337)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Voice helper</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Protected - running</text><rect x="558" y="32" width="64" height="32" rx="16" fill="#566577"><set attributeName="fill" to="#317658" begin="loop.begin+1.7s" dur="3.3s"/></rect><circle cx="575" cy="48" r="12" fill="#dbe4ed"><animate attributeName="cx" from="575" to="605" begin="loop.begin+1.7s" dur="0.28s" fill="freeze"/><set attributeName="cx" to="575" begin="loop.begin" dur="1.7s"/></circle></g>
+<g transform="translate(0,450)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Gesture helper</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Not protected</text><rect x="558" y="32" width="64" height="32" rx="16" fill="#566577"/><circle cx="575" cy="48" r="12" fill="#dbe4ed"/></g>
+<g transform="translate(0,563)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Focus helper</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Not protected</text><rect x="558" y="32" width="64" height="32" rx="16" fill="#566577"/><circle cx="575" cy="48" r="12" fill="#dbe4ed"/></g>
+<text x="48" y="785" font-size="22" fill="#f1f6fc">Choose which services Keeper should restore.</text>
+<text x="48" y="846" font-size="18" fill="#aabaca">Sample services and events / Accessibility Keeper beta</text>
+</g>
+</g>
+<g opacity='0'><animate attributeName='opacity' values='0;1;1;0' keyTimes='0;.07;.92;1' begin='loop.begin+5s' dur='5s' fill='freeze'/><animateTransform attributeName='transform' type='translate' values='16 0;0 0' begin='loop.begin+5s' dur='0.35s'/>
+<g font-family="Arial">
+<text x="48" y="64" font-size="19" fill="#87ddbc">ACCESSIBILITY KEEPER / ILLUSTRATED DEMO</text>
+<text x="48" y="128" font-size="44" font-weight="bold" fill="#f1f6fc">App options</text>
+<rect x="48" y="177" width="624" height="548" rx="32" fill="#171d25" stroke="#384655" stroke-width="2"/>
+<rect x="72" y="202" width="576" height="112" rx="24" fill="#19372f"/>
+<text x="96" y="248" font-size="32" font-weight="bold" fill="#a0eacc">Voice helper</text>
+<text x="96" y="286" font-size="22" fill="#c5e8db">Protected and running</text>
+<g transform="translate(0,337)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Open app</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Launch Voice helper</text></g>
+<g transform="translate(0,450)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Accessibility settings</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Manage this service on Android</text></g>
+<g transform="translate(0,563)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Done</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Return to your services</text></g>
+<text x="48" y="785" font-size="22" fill="#f1f6fc">The tile opens options. The switch controls protection.</text>
+<text x="48" y="846" font-size="18" fill="#aabaca">Sample services and events / Accessibility Keeper beta</text>
+</g>
+</g>
+<g opacity='0'><animate attributeName='opacity' values='0;1;1;0' keyTimes='0;.07;.92;1' begin='loop.begin+10s' dur='5s' fill='freeze'/><animateTransform attributeName='transform' type='translate' values='16 0;0 0' begin='loop.begin+10s' dur='0.35s'/>
+<g font-family="Arial">
+<text x="48" y="64" font-size="19" fill="#87ddbc">ACCESSIBILITY KEEPER / ILLUSTRATED DEMO</text>
+<text x="48" y="128" font-size="44" font-weight="bold" fill="#f1f6fc">Pause recovery</text>
+<rect x="48" y="177" width="624" height="548" rx="32" fill="#171d25" stroke="#384655" stroke-width="2"/>
+<rect x="72" y="202" width="576" height="112" rx="24" fill="#19372f"/>
+<text x="96" y="248" font-size="32" font-weight="bold" fill="#a0eacc">Protection paused</text>
+<text x="96" y="286" font-size="22" fill="#c5e8db">Resume when ready</text>
+<g transform="translate(0,337)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Voice helper</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Selected - recovery paused</text><rect x="558" y="32" width="64" height="32" rx="16" fill="#317658"/><circle cx="605" cy="48" r="12" fill="#dbe4ed"/></g>
+<g transform="translate(0,450)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Resume</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Turn recovery back on</text></g>
+<text x="48" y="785" font-size="22" fill="#f1f6fc">Pause recovery whenever you need to.</text>
+<text x="48" y="846" font-size="18" fill="#aabaca">Sample services and events / Accessibility Keeper beta</text>
+</g>
+</g>
+<g opacity='0'><animate attributeName='opacity' values='0;1;1;0' keyTimes='0;.07;.92;1' begin='loop.begin+15s' dur='5s' fill='freeze'/><animateTransform attributeName='transform' type='translate' values='16 0;0 0' begin='loop.begin+15s' dur='0.35s'/>
+<g font-family="Arial">
+<text x="48" y="64" font-size="19" fill="#87ddbc">ACCESSIBILITY KEEPER / ILLUSTRATED DEMO</text>
+<text x="48" y="128" font-size="44" font-weight="bold" fill="#f1f6fc">Recent activity</text>
+<rect x="48" y="177" width="624" height="548" rx="32" fill="#171d25" stroke="#384655" stroke-width="2"/>
+<rect x="72" y="202" width="576" height="112" rx="24" fill="#19372f"/>
+<text x="96" y="248" font-size="32" font-weight="bold" fill="#a0eacc">Recovery example</text>
+<text x="96" y="286" font-size="22" fill="#c5e8db">Sample activity at 10:42</text>
+<g transform="translate(0,337)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Voice helper</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Recovered and bound</text></g>
+<g transform="translate(0,450)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Gesture helper</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Open app to finish connecting</text></g>
+<text x="48" y="785" font-size="22" fill="#f1f6fc">Activity shows what Keeper could verify.</text>
+<text x="48" y="846" font-size="18" fill="#aabaca">Sample services and events / Accessibility Keeper beta</text>
+</g>
+</g>
+<g opacity='0'><animate attributeName='opacity' values='0;1;1;0' keyTimes='0;.07;.92;1' begin='loop.begin+20s' dur='5s' fill='freeze'/><animateTransform attributeName='transform' type='translate' values='16 0;0 0' begin='loop.begin+20s' dur='0.35s'/>
+<g font-family="Arial">
+<text x="48" y="64" font-size="19" fill="#87ddbc">ACCESSIBILITY KEEPER / ILLUSTRATED DEMO</text>
+<text x="48" y="128" font-size="44" font-weight="bold" fill="#f1f6fc">Before you begin</text>
+<rect x="48" y="177" width="624" height="548" rx="32" fill="#171d25" stroke="#384655" stroke-width="2"/>
+<rect x="72" y="202" width="576" height="112" rx="24" fill="#19372f"/>
+<text x="96" y="248" font-size="32" font-weight="bold" fill="#a0eacc">Choose apps you trust</text>
+<text x="96" y="286" font-size="22" fill="#c5e8db">Permission guide</text>
+<g transform="translate(0,337)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Secure settings</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Restores the services you select</text></g>
+<g transform="translate(0,450)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Diagnostics</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Checks whether services are connected</text></g>
+<g transform="translate(0,563)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">About Keeper</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Source, credits and licenses</text></g>
+<text x="48" y="785" font-size="22" fill="#f1f6fc">Read the permissions and setup guide before installing.</text>
+<text x="48" y="846" font-size="18" fill="#aabaca">Sample services and events / Accessibility Keeper beta</text>
+</g>
+</g>
+<g opacity='0'><animate attributeName='opacity' values='0;1;1;0' keyTimes='0;.07;.92;1' begin='loop.begin+25s' dur='5s' fill='freeze'/><animateTransform attributeName='transform' type='translate' values='16 0;0 0' begin='loop.begin+25s' dur='0.35s'/>
+<g font-family="Arial" fill="#f1f6fc">
+<text x="48" y="64" font-size="19" fill="#87ddbc">ACCESSIBILITY KEEPER / ILLUSTRATED DEMO</text>
+<text x="48" y="128" font-size="44" font-weight="bold">About Keeper</text>
+<rect x="48" y="177" width="624" height="548" rx="32" fill="#171d25"/>
+<rect x="72" y="202" width="576" height="124" rx="24" fill="#19372f"/>
+<text x="96" y="254" font-size="32" font-weight="bold" fill="#a0eacc">Accessibility Keeper</text>
+<text x="96" y="292" font-size="22">0.2.0-beta.1 / Experimental beta</text>
+<text x="96" y="390" font-size="27" font-weight="bold">Project source</text>
+<text x="96" y="426" font-size="22">Soham Rao / Accessibility Keeper</text>
+<text x="96" y="487" font-size="27" font-weight="bold">Original project</text>
+<text x="96" y="523" font-size="22">HyperOS Accessibility Guard by haku4130</text>
+<text x="96" y="583" font-size="27" font-weight="bold">Licenses and policies</text>
+<text x="96" y="619" font-size="22">MIT license, third-party notices and privacy</text>
+<text x="48" y="785" font-size="22">Find source, upstream credits and licenses in About.</text>
+</g>
+</g>
+<circle cx='605' cy='385' r='9' fill='none' stroke='#b2f8db' stroke-width='3' opacity='0'><animate attributeName='opacity' values='0;1;0' dur='0.6s' begin='loop.begin+1.7s'/><animate attributeName='r' values='9;28' dur='0.6s' begin='loop.begin+1.7s'/></circle>
+<circle cx='241' cy='380' r='9' fill='none' stroke='#b2f8db' stroke-width='3' opacity='0'><animate attributeName='opacity' values='0;1;0' dur='0.6s' begin='loop.begin+4.4s'/><animate attributeName='r' values='9;28' dur='0.6s' begin='loop.begin+4.4s'/></circle>
+<circle cx='352' cy='377' r='9' fill='none' stroke='#b2f8db' stroke-width='3' opacity='0'><animate attributeName='opacity' values='0;1;0' dur='0.6s' begin='loop.begin+7.25s'/><animate attributeName='r' values='9;28' dur='0.6s' begin='loop.begin+7.25s'/></circle>
+<circle cx='211' cy='474' r='9' fill='none' stroke='#b2f8db' stroke-width='3' opacity='0'><animate attributeName='opacity' values='0;1;0' dur='0.6s' begin='loop.begin+13s'/><animate attributeName='r' values='9;28' dur='0.6s' begin='loop.begin+13s'/></circle>
+<circle cx='219' cy='382' r='9' fill='none' stroke='#b2f8db' stroke-width='3' opacity='0'><animate attributeName='opacity' values='0;1;0' dur='0.6s' begin='loop.begin+17s'/><animate attributeName='r' values='9;28' dur='0.6s' begin='loop.begin+17s'/></circle>
+<circle cx='304' cy='608' r='9' fill='none' stroke='#b2f8db' stroke-width='3' opacity='0'><animate attributeName='opacity' values='0;1;0' dur='0.6s' begin='loop.begin+24.4s'/><animate attributeName='r' values='9;28' dur='0.6s' begin='loop.begin+24.4s'/></circle>
+<rect x="48" y="873" width="624" height="4" rx="2" fill="#354452"/><rect x="48" y="873" width="0" height="4" rx="2" fill="#87ddbc"><animate attributeName="width" values="0;624" dur="30s" begin="loop.begin"/></rect></svg>

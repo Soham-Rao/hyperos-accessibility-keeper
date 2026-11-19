@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="900" viewBox="0 0 720 900">
+<title>Choose your apps - illustrated demo</title><rect width="720" height="900" fill="#10151c"/>
+<g font-family="Arial">
+<text x="48" y="64" font-size="19" fill="#87ddbc">ACCESSIBILITY KEEPER / ILLUSTRATED DEMO</text>
+<text x="48" y="128" font-size="44" font-weight="bold" fill="#f1f6fc">Choose your apps</text>
+<rect x="48" y="177" width="624" height="548" rx="32" fill="#171d25" stroke="#384655" stroke-width="2"/>
+<rect x="72" y="202" width="576" height="112" rx="24" fill="#19372f"/>
+<text x="96" y="248" font-size="32" font-weight="bold" fill="#a0eacc">Protection is on</text>
+<text x="96" y="286" font-size="22" fill="#c5e8db">1 service selected</text>
+<g transform="translate(0,337)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Voice helper</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Protected - running</text><rect x="558" y="32" width="64" height="32" rx="16" fill="#317658"/><circle cx="605" cy="48" r="12" fill="#dbe4ed"/></g>
+<g transform="translate(0,450)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Gesture helper</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Not protected</text><rect x="558" y="32" width="64" height="32" rx="16" fill="#566577"/><circle cx="575" cy="48" r="12" fill="#dbe4ed"/></g>
+<g transform="translate(0,563)"><rect x="72" width="576" height="96" rx="18" fill="#222b36"/><text x="96" y="39" font-size="26" font-weight="bold" fill="#f1f6fc">Focus helper</text><text x="96" y="70" font-size="20" fill="#bdc9d5">Not protected</text><rect x="558" y="32" width="64" height="32" rx="16" fill="#566577"/><circle cx="575" cy="48" r="12" fill="#dbe4ed"/></g>
+<text x="48" y="785" font-size="22" fill="#f1f6fc">Choose which services Keeper should restore.</text>
+<text x="48" y="846" font-size="18" fill="#aabaca">Sample services and events / Accessibility Keeper beta</text>
+</g></svg>
