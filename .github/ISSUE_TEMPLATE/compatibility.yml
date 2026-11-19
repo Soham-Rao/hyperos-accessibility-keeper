@@ -1,0 +1,22 @@
+name: Compatibility report
+description: Share a HyperOS test result, including a partial result or failure.
+body:
+  - type: input
+    id: versions
+    attributes:
+      label: Device and versions
+      description: Include model, Android, HyperOS and Keeper version or commit. Leave out device serials.
+    validations:
+      required: true
+  - type: textarea
+    id: results
+    attributes:
+      label: Steps and observed results
+      description: Describe what you tried, what recovered, and what required opening the app. Note reboot or idle checks only if you ran them.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Optional redacted evidence
+      description: Remove personal app details, accounts, notifications and identifiers. Avoid full diagnostic dumps.

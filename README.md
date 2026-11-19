@@ -48,3 +48,5 @@ Maintained by [Soham-Rao](https://github.com/Soham-Rao). Based on [HyperOS Acces
 [Privacy](PRIVACY.md) · [Terms](TERMS.md) · [Security](SECURITY.md) · [Permission guide](docs/PERMISSIONS.md)
 
 [Audit findings and remaining release checks](docs/AUDIT.md)
+
+[Device compatibility](docs/COMPATIBILITY.md) · [Release preparation](docs/RELEASE.md)
